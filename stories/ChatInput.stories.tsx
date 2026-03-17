@@ -16,7 +16,8 @@ const meta: Meta<typeof ChatInput> = {
   parameters: {
     docs: {
       description: {
-        component: "Input field for typing and sending chat messages with optional media attachment."
+        component:
+          "Input field for typing and sending chat messages with optional media attachment."
       }
     }
   }

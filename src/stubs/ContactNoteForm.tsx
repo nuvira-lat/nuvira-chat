@@ -4,7 +4,12 @@ interface ContactNoteFormProps {
   workspace: { id: string };
   contact: { id: string };
   note?: { id: number; description: string };
-  createdNote: (note: { id: number; description: string; createdAt: Date; contactId?: string }) => void;
+  createdNote: (note: {
+    id: number;
+    description: string;
+    createdAt: Date;
+    contactId?: string;
+  }) => void;
 }
 
 export function ContactNoteForm({ createdNote }: ContactNoteFormProps) {

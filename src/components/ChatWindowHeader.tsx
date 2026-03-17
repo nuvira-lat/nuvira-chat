@@ -1,15 +1,12 @@
 import { NvAvatar } from "@/stubs/NvAvatar";
 import { ChatAgentSwitch } from "./Agent/ChatAgentSwitch";
-import {
-  ContactStatusChip,
-  getColorFromstatus
-} from "@/stubs/contact/ContactStatusChip";
+import { ContactStatusChip, getColorFromstatus } from "@/stubs/contact/ContactStatusChip";
 import LoadingAnimation from "@/stubs/LoadingAnimation";
 import { Alert, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
 import { Contact } from "@/types";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { CustomStageDisplay } from "@/stubs/contact/CustomStageDisplay";
 import { CustomFunnelDisplay } from "@/stubs/contact/CustomFunnelDisplay";
 

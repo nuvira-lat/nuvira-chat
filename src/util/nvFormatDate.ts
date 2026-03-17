@@ -1,9 +1,6 @@
 import isNil from "lodash/isNil";
 
-export const nvFormatDate = (
-  date: Date | string | null | undefined,
-  hideTime: boolean = false
-) => {
+export const nvFormatDate = (date: Date | string | null | undefined, hideTime: boolean = false) => {
   const locale = "en-US";
   if (isNil(date)) return "N/A";
   const _date = (() => {

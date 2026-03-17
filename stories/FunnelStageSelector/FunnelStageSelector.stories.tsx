@@ -15,7 +15,7 @@ const meta: Meta<typeof FunnelStageSelector> = {
         "contact/custom-funnel": { success: true },
         "contact/custom-stage": { success: true }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 3, bgcolor: "grey.50", maxWidth: "400px" }}>
           <Story />

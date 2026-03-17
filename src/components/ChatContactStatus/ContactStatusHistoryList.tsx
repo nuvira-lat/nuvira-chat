@@ -99,7 +99,10 @@ export const ContactStatusHistoryList = ({ contactId }: Props) => {
                       sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
                     >
                       <Typography variant="body2" color="text.secondary" component="span">
-                        {format(new Date(item.createdAt ?? item.changedAt ?? Date.now()), "MMM dd, yyyy 'at' h:mm a")}
+                        {format(
+                          new Date(item.createdAt ?? item.changedAt ?? 0),
+                          "MMM dd, yyyy 'at' h:mm a"
+                        )}
                       </Typography>
                       <Chip
                         label={item.isAutomatic ? "Automatic" : "Manual"}

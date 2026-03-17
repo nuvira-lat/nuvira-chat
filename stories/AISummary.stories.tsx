@@ -13,7 +13,7 @@ const meta: Meta<typeof AISummary> = {
       const restore = createFetchMock({
         "contact-summary": { description: "AI-generated summary of the contact." }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 3, bgcolor: "grey.50", maxWidth: "400px" }}>
           <Story />

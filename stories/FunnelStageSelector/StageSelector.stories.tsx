@@ -14,7 +14,7 @@ const meta: Meta<typeof StageSelector> = {
       const restore = createFetchMock({
         "contact/custom-stage": { success: true }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 3, bgcolor: "grey.50", maxWidth: "300px" }}>
           <Story />

@@ -15,25 +15,32 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"*.{js,mjs,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"*.{js,mjs,json}\"",
+    "check": "npm run typecheck && npm run lint && npm run format:check"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
-    "@mui/material": ">=5.0.0",
-    "@mui/icons-material": ">=5.0.0",
     "@emotion/react": ">=11.0.0",
-    "@emotion/styled": ">=11.0.0"
+    "@emotion/styled": ">=11.0.0",
+    "@mui/icons-material": ">=5.0.0",
+    "@mui/material": ">=5.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.4",
-    "@mui/material": "^6.4.7",
-    "lodash": "^4.17.21",
-    "date-fns": "^3.6.0"
+    "@emotion/react": ">=11.0.0",
+    "@emotion/styled": ">=11.0.0",
+    "@mui/icons-material": ">=5.0.0",
+    "@mui/material": ">=5.0.0",
+    "date-fns": "^3.6.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "^8.6.12",
     "@storybook/addon-links": "^8.6.12",
@@ -44,9 +51,15 @@
     "@types/lodash": "^4.17.15",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "prettier": "^3.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^8.6.12",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.57.1"
   }
 }

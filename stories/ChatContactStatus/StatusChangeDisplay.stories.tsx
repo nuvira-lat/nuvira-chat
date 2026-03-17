@@ -1,11 +1,7 @@
 import { StatusChangeDisplay } from "@/components/ChatContactStatus/StatusChangeDisplay";
 import { Stack } from "@mui/material";
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  mockStatusChangeItem,
-  mockStageChangeItem,
-  mockFunnelChangeItem
-} from "../fixtures";
+import { mockStatusChangeItem, mockStageChangeItem, mockFunnelChangeItem } from "../fixtures";
 
 const meta: Meta<typeof StatusChangeDisplay> = {
   title: "Components/Chat/ChatContactStatus/StatusChangeDisplay",

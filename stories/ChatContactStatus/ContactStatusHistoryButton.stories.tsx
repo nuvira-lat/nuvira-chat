@@ -14,7 +14,7 @@ const meta: Meta<typeof ContactStatusHistoryButton> = {
       const restore = createFetchMock({
         "status/history": { statusHistory: [mockContactStatusHistoryItem] }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 3, bgcolor: "grey.50" }}>
           <Story />

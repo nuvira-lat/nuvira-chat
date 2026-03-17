@@ -13,7 +13,7 @@ const meta: Meta<typeof ContactStatusHistoryList> = {
       const restore = createFetchMock({
         "status/history": { statusHistory: [mockContactStatusHistoryItem] }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 3, bgcolor: "grey.50", maxWidth: "500px" }}>
           <Story />
@@ -43,7 +43,7 @@ export const Empty: Story = {
       const restore = createFetchMock({
         "status/history": { statusHistory: [] }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 3, bgcolor: "grey.50", maxWidth: "500px" }}>
           <Story />

@@ -7,9 +7,7 @@ interface ContactStatusChipProps {
 }
 
 export function ContactStatusChip({ status, onClick }: ContactStatusChipProps) {
-  return (
-    <Chip label={status || "Unknown"} size="small" onClick={onClick} variant="outlined" />
-  );
+  return <Chip label={status || "Unknown"} size="small" onClick={onClick} variant="outlined" />;
 }
 
 export function getColorFromstatus(_status: string, theme?: Theme): { color: string } {

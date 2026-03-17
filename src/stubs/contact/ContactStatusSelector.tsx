@@ -18,11 +18,7 @@ export function ContactStatusSelector({
   return (
     <FormControl size="small" fullWidth={fullWidth} disabled={disabled}>
       <InputLabel>{label}</InputLabel>
-      <Select
-        value={value || ""}
-        label={label}
-        onChange={(e) => onChange(e.target.value)}
-      >
+      <Select value={value || ""} label={label} onChange={(e) => onChange(e.target.value)}>
         <MenuItem value="LEAD_NEW">Lead New</MenuItem>
         <MenuItem value="LEAD_CONTACTED">Lead Contacted</MenuItem>
         <MenuItem value="QUALIFIED">Qualified</MenuItem>

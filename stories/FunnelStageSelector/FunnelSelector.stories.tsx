@@ -14,7 +14,7 @@ const meta: Meta<typeof FunnelSelector> = {
       const restore = createFetchMock({
         "contact/custom-funnel": { success: true }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 3, bgcolor: "grey.50", maxWidth: "300px" }}>
           <Story />

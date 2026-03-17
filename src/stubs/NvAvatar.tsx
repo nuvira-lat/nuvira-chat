@@ -6,9 +6,5 @@ interface NvAvatarProps {
 
 export function NvAvatar({ name }: NvAvatarProps) {
   const initial = name?.[0]?.toUpperCase() ?? "?";
-  return (
-    <Avatar sx={{ bgcolor: "primary.main" }}>
-      {initial}
-    </Avatar>
-  );
+  return <Avatar sx={{ bgcolor: "primary.main" }}>{initial}</Avatar>;
 }

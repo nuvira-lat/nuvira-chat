@@ -53,7 +53,6 @@ export const ChatWindow = ({
           });
 
           if (!response.ok) {
-            // eslint-disable-next-line no-console
             console.error("Failed to update talkingToAgent state:", await response.json());
             return;
           }
@@ -63,7 +62,6 @@ export const ChatWindow = ({
             steAgentActive(nv);
           }
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.error("Error while updating talkingToAgent state:", error);
         }
       };
@@ -108,7 +106,6 @@ export const ChatWindow = ({
           });
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error("Error parsing stream data:", error);
       }
     }
@@ -130,7 +127,10 @@ export const ChatWindow = ({
 
         if (mediaFile) {
           // Upload the media file and get both URLs
-          const uploadResult = await uploadMediaFileWithUrls(mediaFile.file, contact.workspaceId ?? "");
+          const uploadResult = await uploadMediaFileWithUrls(
+            mediaFile.file,
+            contact.workspaceId ?? ""
+          );
           mediaUrl = uploadResult.whatsappUrl; // Use WhatsApp-accessible URL for sending
           messageType = mediaFile.type;
           mediaType = mediaFile.file.type;
@@ -153,14 +153,12 @@ export const ChatWindow = ({
         });
 
         if (!response.ok) {
-          // eslint-disable-next-line no-console
           console.error("Failed to send message:", await response.json());
           return;
         }
 
         setMessage("");
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error("Error while sending message:", error);
       } finally {
         setLoading(false);
@@ -207,7 +205,11 @@ export const ChatWindow = ({
           contact={contact}
           loading={loading ?? false}
         />
-        <ChatMessagesContainer agentActive={agentActive ?? false} messages={messages} contact={contact} />
+        <ChatMessagesContainer
+          agentActive={agentActive ?? false}
+          messages={messages}
+          contact={contact}
+        />
         <ChatInput
           message={message}
           agentActive={agentActive ?? false}

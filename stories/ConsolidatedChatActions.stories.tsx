@@ -23,7 +23,7 @@ const meta: Meta<typeof ConsolidatedChatActions> = {
         "status/history": { statusHistory: [] },
         "contact-summary": { description: "AI summary" }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <Stack sx={{ p: 0, bgcolor: "grey.100", minWidth: "300px", height: "600px" }}>
           <Story />
@@ -34,7 +34,8 @@ const meta: Meta<typeof ConsolidatedChatActions> = {
   parameters: {
     docs: {
       description: {
-        component: "Sidebar with contact status, info editor, funnel/stage selector, AI summary, and notes."
+        component:
+          "Sidebar with contact status, info editor, funnel/stage selector, AI summary, and notes."
       }
     }
   }

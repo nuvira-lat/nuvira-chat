@@ -61,9 +61,7 @@ export const WithMessages: Story = {
 export const WithAiCover: Story = {
   args: {
     agentActive: true,
-    messages: [
-      { ...mockContactMessage, id: "1", message: "Hello!", inbound: true }
-    ],
+    messages: [{ ...mockContactMessage, id: "1", message: "Hello!", inbound: true }],
     contact: mockContact
   }
 };

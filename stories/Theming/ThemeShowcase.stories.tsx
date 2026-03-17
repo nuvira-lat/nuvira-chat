@@ -48,17 +48,8 @@ export const DefaultTheme: Story = {
   ],
   render: () => (
     <>
-      <ChatWindowHeader
-        agentActive={false}
-        contact={mockContact}
-        activateAgent={fn()}
-      />
-      <ChatInput
-        message=""
-        agentActive={false}
-        onMessageChange={fn()}
-        onSubmit={fn()}
-      />
+      <ChatWindowHeader agentActive={false} contact={mockContact} activateAgent={fn()} />
+      <ChatInput message="" agentActive={false} onMessageChange={fn()} onSubmit={fn()} />
       <ChatMessagesContainer
         agentActive={false}
         messages={[
@@ -81,9 +72,7 @@ export const DefaultTheme: Story = {
 export const CustomPrimary: Story = {
   decorators: [
     (Story) => (
-      <ThemeProvider
-        theme={createChatTheme({ palette: { primary: { main: "#9c27b0" } } })}
-      >
+      <ThemeProvider theme={createChatTheme({ palette: { primary: { main: "#9c27b0" } } })}>
         <CssBaseline />
         <Stack gap={2} sx={{ p: 2, bgcolor: "grey.50", minWidth: "400px" }}>
           <Story />
@@ -93,17 +82,8 @@ export const CustomPrimary: Story = {
   ],
   render: () => (
     <>
-      <ChatWindowHeader
-        agentActive={false}
-        contact={mockContact}
-        activateAgent={fn()}
-      />
-      <ChatInput
-        message=""
-        agentActive={false}
-        onMessageChange={fn()}
-        onSubmit={fn()}
-      />
+      <ChatWindowHeader agentActive={false} contact={mockContact} activateAgent={fn()} />
+      <ChatInput message="" agentActive={false} onMessageChange={fn()} onSubmit={fn()} />
       <ChatAgentSwitch checked={false} onChange={fn()} />
       <TextMessage message="Sample message with intent" intent="general_inquiry" />
     </>
@@ -124,17 +104,8 @@ export const DarkMode: Story = {
   ],
   render: () => (
     <>
-      <ChatWindowHeader
-        agentActive={true}
-        contact={mockContact}
-        activateAgent={fn()}
-      />
-      <ChatInput
-        message=""
-        agentActive={true}
-        onMessageChange={fn()}
-        onSubmit={fn()}
-      />
+      <ChatWindowHeader agentActive={true} contact={mockContact} activateAgent={fn()} />
+      <ChatInput message="" agentActive={true} onMessageChange={fn()} onSubmit={fn()} />
       <TextMessage message="Dark mode message" intent="support" />
     </>
   )
@@ -166,11 +137,7 @@ export const CustomBranding: Story = {
   ],
   render: () => (
     <>
-      <ChatWindowHeader
-        agentActive={false}
-        contact={mockContact}
-        activateAgent={fn()}
-      />
+      <ChatWindowHeader agentActive={false} contact={mockContact} activateAgent={fn()} />
       <ChatInput
         message="Custom branded input"
         agentActive={false}
@@ -178,10 +145,7 @@ export const CustomBranding: Story = {
         onSubmit={fn()}
       />
       <ChatAgentSwitch checked={true} onChange={fn()} />
-      <TextMessage
-        message="Message with custom intent colors"
-        intent="pricing_inquiry"
-      />
+      <TextMessage message="Message with custom intent colors" intent="pricing_inquiry" />
     </>
   )
 };
@@ -258,7 +222,7 @@ export const ConsolidatedWithTheme: Story = {
         "status/history": { statusHistory: [] },
         "contact-summary": { description: "AI-generated summary" }
       });
-      useEffect(() => () => restore(), []);
+      useEffect(() => () => restore(), []); // eslint-disable-line react-hooks/exhaustive-deps
       return (
         <ThemeProvider theme={createChatTheme({ palette: { primary: { main: "#d32f2f" } } })}>
           <CssBaseline />
