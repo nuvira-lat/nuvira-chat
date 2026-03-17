@@ -1,5 +1,15 @@
 import type { Preview } from "@storybook/react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { MINIMAL_VIEWPORTS } from "@storybook/addon-viewport";
+
+/** Chat panel viewport – typical desktop sidebar/chat window size */
+const chatViewport = {
+  chat: {
+    name: "Chat panel",
+    styles: { width: "420px", height: "800px" },
+    type: "desktop" as const
+  }
+};
 
 const theme = createTheme({
   palette: {
@@ -16,7 +26,11 @@ const preview: Preview = {
         date: /Date$/i
       }
     },
-    layout: "centered"
+    layout: "centered",
+    viewport: {
+      viewports: { ...chatViewport, ...MINIMAL_VIEWPORTS },
+      defaultViewport: "chat"
+    }
   },
   decorators: [
     (Story) => (
