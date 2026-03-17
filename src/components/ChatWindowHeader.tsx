@@ -5,8 +5,9 @@ import {
   getColorFromstatus
 } from "@/stubs/contact/ContactStatusChip";
 import LoadingAnimation from "@/stubs/LoadingAnimation";
-import { THEME_COLOR_PRIMARY } from "@/stubs/themeColors";
 import { Alert, Stack, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { Contact } from "@/types";
 import { useCallback, useMemo } from "react";
 import { CustomStageDisplay } from "@/stubs/contact/CustomStageDisplay";
@@ -18,6 +19,8 @@ interface Props {
   showAlert?: boolean;
   contact: Contact;
   loading?: boolean;
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
 }
 
 export const ChatWindowHeader = ({
@@ -25,7 +28,8 @@ export const ChatWindowHeader = ({
   contact,
   activateAgent,
   showAlert,
-  loading
+  loading,
+  sx
 }: Props) => {
   const handleChange = useCallback(
     (_: unknown, checked: boolean) => {
@@ -34,13 +38,11 @@ export const ChatWindowHeader = ({
     [activateAgent]
   );
 
-  // Status color mapping for the header border
-  const getStatusColor = useMemo(() => {
-    return getColorFromstatus(contact.status ?? "").color;
-  }, [contact.status]);
+  const theme = useTheme();
+  const statusColor = getColorFromstatus(contact.status ?? "", theme).color;
 
   return (
-    <Stack gap={1}>
+    <Stack gap={1} sx={sx}>
       <Stack
         direction="row"
         px={2}
@@ -48,7 +50,7 @@ export const ChatWindowHeader = ({
         justifyContent="space-between"
         alignContent="space-between"
         sx={{
-          borderLeft: `4px solid ${getStatusColor}`,
+          borderLeft: `4px solid ${statusColor}`,
           bgcolor: "background.paper",
           boxShadow: "0px 1px 3px rgba(0,0,0,0.1)"
         }}
@@ -81,7 +83,7 @@ export const ChatWindowHeader = ({
             disabled={loading}
             sx={{ my: "auto" }}
           />
-          {loading && <LoadingAnimation type="spinner" color={THEME_COLOR_PRIMARY} />}
+          {loading && <LoadingAnimation type="spinner" color={theme.palette.primary.main} />}
         </Stack>
       </Stack>
       {showAlert && (

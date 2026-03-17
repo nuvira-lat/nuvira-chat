@@ -12,6 +12,7 @@ import {
   Box,
   Typography
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { ChangeEvent, useState, KeyboardEvent, useRef, useCallback } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -20,7 +21,7 @@ import AudioFileIcon from "@mui/icons-material/AudioFile";
 import VideoFileIcon from "@mui/icons-material/VideoFile";
 import DescriptionIcon from "@mui/icons-material/Description";
 import CloseIcon from "@mui/icons-material/Close";
-import { THEME_COLOR_PRIMARY } from "@/stubs/themeColors";
+import { useTheme } from "@mui/material/styles";
 
 interface MediaFile {
   file: File;
@@ -35,6 +36,10 @@ interface Props {
   onMessageChange: (message: string) => void;
   onSubmit: (message: string | null, mediaFile?: MediaFile) => Promise<void>;
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
+  /** MUI slotProps for the TextField input - merged with internal adornments */
+  slotProps?: { input?: Record<string, unknown> };
 }
 
 export const ChatInput = ({
@@ -43,7 +48,9 @@ export const ChatInput = ({
   loading = false,
   onMessageChange,
   onSubmit,
-  onKeyDown
+  onKeyDown,
+  sx,
+  slotProps: slotPropsProp
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedMedia, setSelectedMedia] = useState<MediaFile | null>(null);
@@ -147,9 +154,11 @@ export const ChatInput = ({
   };
 
   const isDisabled = agentActive || loading;
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
 
   return (
-    <Stack sx={{ py: 0, px: 2, pb: 0, mb: 2, mt: 2 }}>
+    <Stack sx={{ py: 0, px: 2, pb: 0, mb: 2, mt: 2, ...(sx || {}) }}>
       {selectedMedia && (
         <Box sx={{ mb: 1, p: 1, bgcolor: "grey.50", borderRadius: 1 }}>
           <Chip
@@ -186,12 +195,13 @@ export const ChatInput = ({
           sx={isDisabled ? { backgroundColor: "grey.200" } : {}}
           slotProps={{
             input: {
+              ...slotPropsProp?.input,
               startAdornment: (
                 <InputAdornment position="start">
                   <IconButton
                     onClick={handleAttachClick}
                     disabled={isDisabled}
-                    sx={{ color: isDisabled ? "grey.500" : THEME_COLOR_PRIMARY }}
+                    sx={{ color: isDisabled ? "grey.500" : primaryColor }}
                     size="small"
                   >
                     <AttachFileIcon />
@@ -203,7 +213,7 @@ export const ChatInput = ({
                   <IconButton
                     onClick={handleSubmit}
                     disabled={isDisabled || (!message?.trim() && !selectedMedia)}
-                    sx={{ color: isDisabled ? "grey.500" : THEME_COLOR_PRIMARY }}
+                    sx={{ color: isDisabled ? "grey.500" : primaryColor }}
                   >
                     <SendIcon />
                   </IconButton>

@@ -14,6 +14,7 @@
 
 import { nvFormatDate } from "@/util/nvFormatDate";
 import { Stack, Avatar, Paper, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact, ContactMessage, MessageType } from "@/types";
 import { useMemo } from "react";
 import PersonIcon from "@mui/icons-material/Person";
@@ -45,6 +46,8 @@ interface Props {
   debug?: boolean;
   /** Optional flag to invert message layout direction */
   inverse?: boolean;
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
 }
 
 /**
@@ -60,7 +63,14 @@ interface Props {
  * @param props.debug - Enable debug logging for troubleshooting
  * @returns JSX element containing the complete chat message
  */
-export const ChatMessage = ({ contact, message, additional, debug = false, inverse }: Props) => {
+export const ChatMessage = ({
+  contact,
+  message,
+  additional,
+  debug = false,
+  inverse,
+  sx
+}: Props) => {
   const inbound = inverse ? message.inbound === false : message.inbound === true;
   // Use the media URL hook to handle signed URLs for media messages
   const {
@@ -180,7 +190,15 @@ export const ChatMessage = ({ contact, message, additional, debug = false, inver
   };
 
   return (
-    <Stack sx={{ display: "flex", alignItems: "flex-start", flexDirection: direction, gap: 1 }}>
+    <Stack
+      sx={{
+        display: "flex",
+        alignItems: "flex-start",
+        flexDirection: direction,
+        gap: 1,
+        ...(sx || {})
+      }}
+    >
       <Avatar sx={{ bgcolor: "primary.main" }}>{icon}</Avatar>
       <Paper
         sx={{

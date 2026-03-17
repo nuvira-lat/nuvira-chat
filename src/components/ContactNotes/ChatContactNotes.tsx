@@ -1,5 +1,6 @@
 import { ContactNoteCard } from "@/stubs/ContactNoteCard";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Workspace, Contact, ContactNotes } from "@/types";
 import AddIcon from "@mui/icons-material/Add";
 import compact from "lodash/compact";
@@ -12,9 +13,11 @@ interface Props {
   contact: Contact;
   notes: ContactNotes[];
   workspace: Workspace;
+  /** MUI sx prop for the root Box */
+  sx?: SxProps<Theme>;
 }
 
-export const ChatContactNotes = ({ contact, notes: _notes, workspace }: Props) => {
+export const ChatContactNotes = ({ contact, notes: _notes, workspace, sx }: Props) => {
   const [notes, setNotes] = useState<ContactNotes[]>(_notes);
   const [selectedNote, setSelectedNote] = useState<ContactNotes | null>(null);
   const [open, setOpen] = useState(false);
@@ -26,7 +29,7 @@ export const ChatContactNotes = ({ contact, notes: _notes, workspace }: Props) =
 
   return (
     <>
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, ...(sx || {}) }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h6">Contact Notes</Typography>
           <IconButton color="primary" size="small">

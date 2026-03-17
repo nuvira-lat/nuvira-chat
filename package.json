@@ -2,6 +2,16 @@
   "name": "@nuvira/chat-components",
   "version": "0.1.0",
   "description": "Chat message components for React (text, image, audio, video, document)",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "storybook": "storybook dev -p 6006",

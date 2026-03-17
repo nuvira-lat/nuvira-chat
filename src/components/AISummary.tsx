@@ -10,6 +10,7 @@
 import LoadingAnimation from "@/stubs/LoadingAnimation";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { Typography, Button, Tooltip, Stack } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact } from "@/types";
 import isNil from "lodash/isNil";
 import { useCallback, useState } from "react";
@@ -22,6 +23,8 @@ export interface AISummaryProps {
   contact: Contact;
   /** Whether the component is disabled */
   disabled?: boolean;
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
 }
 
 /**
@@ -35,7 +38,7 @@ export interface AISummaryProps {
  * @param props.disabled - Whether summary generation is disabled
  * @returns JSX element containing the AI summary interface
  */
-export const AISummary = ({ contact, disabled = false }: AISummaryProps) => {
+export const AISummary = ({ contact, disabled = false, sx }: AISummaryProps) => {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState(contact.aiNotesSummary);
 
@@ -71,7 +74,7 @@ export const AISummary = ({ contact, disabled = false }: AISummaryProps) => {
   }, [contact.id]);
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} sx={sx}>
       <Typography variant="h6" fontWeight={500}>
         AI Summary
       </Typography>

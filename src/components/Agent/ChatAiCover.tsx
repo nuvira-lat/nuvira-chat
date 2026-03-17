@@ -1,9 +1,17 @@
 import LoadingAnimation from "@/stubs/LoadingAnimation";
-import { THEME_COLOR_PRIMARY } from "@/stubs/themeColors";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { Stack, Avatar, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 
-export const ChatAiCover = () => {
+interface Props {
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
+}
+
+export const ChatAiCover = ({ sx }: Props) => {
+  const theme = useTheme();
+
   return (
     <Stack
       sx={{
@@ -13,11 +21,12 @@ export const ChatAiCover = () => {
         position: "absolute",
         borderRadius: "5px",
         zIndex: 20,
-        bottom: 0
+        bottom: 0,
+        ...(sx || {})
       }}
     >
       <Stack sx={{ height: "min-content", my: "auto" }} gap={2}>
-        <Avatar sx={{ bgcolor: THEME_COLOR_PRIMARY, mx: "auto", p: 1 }}>
+        <Avatar sx={{ bgcolor: theme.palette.primary.main, mx: "auto", p: 1 }}>
           <SmartToyIcon fontSize="large" />
         </Avatar>
         <Typography

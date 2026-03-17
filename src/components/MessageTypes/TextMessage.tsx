@@ -7,6 +7,7 @@
  */
 
 import { Typography, Box, Chip } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useMemo } from "react";
 
 /**
@@ -17,6 +18,8 @@ export interface TextMessageProps {
   message: string;
   /** Classification of message intent (optional) */
   intent?: string | null;
+  /** Optional override for intent colors. Keys are intent names, values are hex colors. */
+  intentColors?: Record<string, string>;
 }
 
 /**
@@ -43,20 +46,24 @@ const intentConfig: Record<string, { label: string; color: string }> = {
  * @param props.intent - Optional intent classification
  * @returns JSX element containing the formatted text message with intent tag
  */
-export const TextMessage = ({ message, intent }: TextMessageProps) => {
+export const TextMessage = ({ message, intent, intentColors }: TextMessageProps) => {
+  const theme = useTheme();
+  const fallbackColor = theme.palette.text.secondary ?? "#757575";
+
   const intentData = useMemo(() => {
     if (!intent) return null;
 
+    const overriddenColor = intentColors?.[intent];
     const config = intentConfig[intent] || {
       label: intent.replace(/_/g, " "),
-      color: "#757575"
+      color: fallbackColor
     };
 
     return {
       label: config.label,
-      color: config.color
+      color: overriddenColor ?? config.color
     };
-  }, [intent]);
+  }, [intent, intentColors, fallbackColor]);
 
   return (
     <Box>

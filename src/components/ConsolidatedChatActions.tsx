@@ -2,6 +2,7 @@
 
 import { FunnelStageSelector } from "./FunnelStageSelector/FunnelStageSelector";
 import { Stack, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact, ContactNotes, CustomFunnel, Workspace } from "@/types";
 
 import { AISummary } from "./AISummary";
@@ -14,16 +15,19 @@ interface Props {
   funnels: CustomFunnel[];
   workspace: Workspace;
   contact: Contact;
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
 }
 
-export const ConsolidatedChatActions = ({ notes, workspace, funnels, contact }: Props) => {
+export const ConsolidatedChatActions = ({ notes, workspace, funnels, contact, sx }: Props) => {
   return (
     <Stack
       sx={{
         borderRightStyle: "solid",
         borderRightColor: "grey.400",
         borderRightWidth: "1px",
-        p: 1
+        p: 1,
+        ...(sx || {})
       }}
       flex={1}
       gap={2}

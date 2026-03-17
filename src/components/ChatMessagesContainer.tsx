@@ -1,6 +1,7 @@
 import { ChatMessage } from "./ChatMessage";
-import { THEME_LIGHT_GREY } from "@/stubs/themeColors";
 import { Stack } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { Contact, ContactMessage } from "@/types";
 import { useRef, useEffect } from "react";
 import { ChatAiCover } from "./Agent/ChatAiCover";
@@ -9,10 +10,14 @@ interface Props {
   agentActive: boolean;
   messages: ContactMessage[];
   contact: Contact;
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
 }
 
-export const ChatMessagesContainer = ({ agentActive, messages, contact }: Props) => {
+export const ChatMessagesContainer = ({ agentActive, messages, contact, sx }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const theme = useTheme();
+  const borderColor = theme.palette.divider ?? theme.palette.grey[300] ?? "#e0e0e0";
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -29,7 +34,8 @@ export const ChatMessagesContainer = ({ agentActive, messages, contact }: Props)
         overflowY: "auto",
         borderRadius: "5px",
         backgroundColor: "#fbfbfb",
-        border: `solid 1px ${THEME_LIGHT_GREY}`
+        border: `solid 1px ${borderColor}`,
+        ...(sx || {})
       }}
       flex={1}
       flexGrow={1}

@@ -1,6 +1,7 @@
 import type { Preview } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { ThemeProvider, CssBaseline } from "@mui/material";
 import { MINIMAL_VIEWPORTS } from "@storybook/addon-viewport";
+import { createChatTheme } from "@/theme";
 
 /** Chat panel viewport – typical desktop sidebar/chat window size */
 const chatViewport = {
@@ -11,12 +12,7 @@ const chatViewport = {
   }
 };
 
-const theme = createTheme({
-  palette: {
-    primary: { main: "#00A6A6" },
-    secondary: { main: "#F5F5F5" }
-  }
-});
+const theme = createChatTheme();
 
 const preview: Preview = {
   parameters: {

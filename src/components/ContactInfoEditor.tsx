@@ -12,6 +12,7 @@ import {
   Card,
   CardContent
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact, Workspace } from "@/types";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -27,9 +28,11 @@ import { logger } from "@/stubs/logger";
 interface ContactInfoEditorProps {
   workspace: Workspace;
   contact: Contact;
+  /** MUI sx prop for the root Stack */
+  sx?: SxProps<Theme>;
 }
 
-export const ContactInfoEditor = ({ contact, workspace }: ContactInfoEditorProps) => {
+export const ContactInfoEditor = ({ contact, workspace, sx }: ContactInfoEditorProps) => {
   const [isEditingContact, setIsEditingContact] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [contactFields, setContactFields] = useState({
@@ -103,7 +106,7 @@ export const ContactInfoEditor = ({ contact, workspace }: ContactInfoEditorProps
   ].filter(Boolean).length;
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} sx={sx}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h6">Contact Information</Typography>
         <Stack direction="row" spacing={1}>

@@ -1,4 +1,5 @@
 import { Chip } from "@mui/material";
+import type { Theme } from "@mui/material/styles";
 
 interface ContactStatusChipProps {
   status: string;
@@ -11,6 +12,6 @@ export function ContactStatusChip({ status, onClick }: ContactStatusChipProps) {
   );
 }
 
-export function getColorFromstatus(_status: string): { color: string } {
-  return { color: "#00A6A6" };
+export function getColorFromstatus(_status: string, theme?: Theme): { color: string } {
+  return { color: theme?.palette?.primary?.main ?? "#00A6A6" };
 }
