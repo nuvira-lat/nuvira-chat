@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { mockStatusChangeItem, mockStageChangeItem, mockFunnelChangeItem } from "../fixtures";
 
 const meta: Meta<typeof StatusChangeDisplay> = {
-  title: "Components/Chat/ChatContactStatus/StatusChangeDisplay",
+  title: "Chat/Primitives/Sidebar Components/ChatContactStatus/StatusChangeDisplay",
   component: StatusChangeDisplay,
   decorators: [
     (Story) => (

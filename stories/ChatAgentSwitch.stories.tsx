@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 
 const meta: Meta<typeof ChatAgentSwitch> = {
-  title: "Components/Chat/ChatAgentSwitch",
+  title: "Chat/Primitives/Agent/ChatAgentSwitch",
   component: ChatAgentSwitch,
   decorators: [
     (Story) => (

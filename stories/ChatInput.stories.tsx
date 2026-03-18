@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 
 const meta: Meta<typeof ChatInput> = {
-  title: "Components/Chat/ChatInput",
+  title: "Chat/Primitives/Input & Header/ChatInput",
   component: ChatInput,
   decorators: [
     (Story) => (

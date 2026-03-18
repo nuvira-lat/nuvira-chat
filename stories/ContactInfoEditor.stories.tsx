@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { mockContact, mockWorkspace } from "./fixtures";
 
 const meta: Meta<typeof ContactInfoEditor> = {
-  title: "Components/Chat/ContactInfoEditor",
+  title: "Chat/Primitives/ContactInfoEditor",
   component: ContactInfoEditor,
   decorators: [
     (Story) => (

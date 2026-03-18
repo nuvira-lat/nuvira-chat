@@ -4,7 +4,7 @@ import { Contact, ContactMessage, MessageType } from "@/types";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof ChatMessage> = {
-  title: "Components/Chat/ChatMessage",
+  title: "Chat/Primitives/Messages/ChatMessage",
   component: ChatMessage,
   decorators: [
     (Story) => (

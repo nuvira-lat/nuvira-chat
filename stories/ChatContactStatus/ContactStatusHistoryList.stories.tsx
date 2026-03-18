@@ -6,7 +6,7 @@ import { createFetchMock } from "../mockFetch";
 import { mockContactStatusHistoryItem } from "../fixtures";
 
 const meta: Meta<typeof ContactStatusHistoryList> = {
-  title: "Components/Chat/ChatContactStatus/ContactStatusHistoryList",
+  title: "Chat/Primitives/Sidebar Components/ChatContactStatus/ContactStatusHistoryList",
   component: ContactStatusHistoryList,
   decorators: [
     (Story) => {

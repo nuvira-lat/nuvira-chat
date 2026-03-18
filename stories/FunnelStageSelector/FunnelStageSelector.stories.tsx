@@ -6,7 +6,7 @@ import { mockContact, mockCustomFunnel, mockCustomStage } from "../fixtures";
 import { createFetchMock } from "../mockFetch";
 
 const meta: Meta<typeof FunnelStageSelector> = {
-  title: "Components/Chat/FunnelStageSelector/FunnelStageSelector",
+  title: "Chat/Primitives/Sidebar Components/FunnelStageSelector/FunnelStageSelector",
   component: FunnelStageSelector,
   decorators: [
     (Story) => {

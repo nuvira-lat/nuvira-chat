@@ -5,7 +5,7 @@ import { fn } from "@storybook/test";
 import { mockContact, mockContactWithFunnel } from "./fixtures";
 
 const meta: Meta<typeof ChatWindowHeader> = {
-  title: "Components/Chat/ChatWindowHeader",
+  title: "Chat/Primitives/Input & Header/ChatWindowHeader",
   component: ChatWindowHeader,
   decorators: [
     (Story) => (

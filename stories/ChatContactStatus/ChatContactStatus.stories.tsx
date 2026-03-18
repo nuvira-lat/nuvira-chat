@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { mockContact } from "../fixtures";
 
 const meta: Meta<typeof ChatContactStatus> = {
-  title: "Components/Chat/ChatContactStatus/ChatContactStatus",
+  title: "Chat/Primitives/Sidebar Components/ChatContactStatus/ChatContactStatus",
   component: ChatContactStatus,
   decorators: [
     (Story) => (

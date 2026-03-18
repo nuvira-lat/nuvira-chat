@@ -10,7 +10,7 @@ import { Stack } from "@mui/material";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof TextMessage> = {
-  title: "Components/Chat/MessageTypes/TextMessage",
+  title: "Chat/Primitives/Messages/MessageTypes/TextMessage",
   component: TextMessage,
   decorators: [
     (Story) => (

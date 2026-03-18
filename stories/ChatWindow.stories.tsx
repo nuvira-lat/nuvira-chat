@@ -3,7 +3,7 @@ import { Contact, ContactMessage, ContactNotes, Workspace } from "@/types";
 import { ChatWindow } from "@/components/ChatWindow";
 
 const meta: Meta<typeof ChatWindow> = {
-  title: "Components/Chat/ChatWindow",
+  title: "Chat/Composites/ChatWindow",
   component: ChatWindow
 };
 

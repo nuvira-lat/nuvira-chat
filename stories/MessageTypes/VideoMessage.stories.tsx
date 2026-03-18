@@ -15,7 +15,7 @@ const mockRetryFunction = () => {
 };
 
 const meta: Meta<typeof VideoMessage> = {
-  title: "Components/Chat/MessageTypes/VideoMessage",
+  title: "Chat/Primitives/Messages/MessageTypes/VideoMessage",
   component: VideoMessage,
   decorators: [
     (Story) => (

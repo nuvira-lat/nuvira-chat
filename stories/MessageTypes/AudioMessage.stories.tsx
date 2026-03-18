@@ -15,7 +15,7 @@ const mockRetryFunction = () => {
 };
 
 const meta: Meta<typeof AudioMessage> = {
-  title: "Components/Chat/MessageTypes/AudioMessage",
+  title: "Chat/Primitives/Messages/MessageTypes/AudioMessage",
   component: AudioMessage,
   decorators: [
     (Story) => (

@@ -3,7 +3,7 @@ import { Stack } from "@mui/material";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof ChatAiCover> = {
-  title: "Components/Chat/ChatAiCover",
+  title: "Chat/Primitives/Agent/ChatAiCover",
   component: ChatAiCover,
   decorators: [
     (Story) => (

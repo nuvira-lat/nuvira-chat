@@ -14,7 +14,7 @@ import { CHAT_SIDEBAR_SECTIONS, CHAT_SIDEBAR_SIMPLE, CHAT_SIDEBAR_STANDARD } fro
 import { createFetchMock } from "./mockFetch";
 
 const meta: Meta<typeof ChatSidebar> = {
-  title: "Components/Chat/ConsolidatedChatActions",
+  title: "Chat/Composites/ConsolidatedChatActions",
   component: ChatSidebar,
   decorators: [
     (Story) => {
