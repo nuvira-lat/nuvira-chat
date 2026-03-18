@@ -14,9 +14,10 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@src/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "stories/**/*"],
+  "include": ["src/**/*", "stories/**/*", ".storybook/**/*"],
   "exclude": ["node_modules", "dist"]
 }

@@ -13,11 +13,19 @@ interface Props {
   contact: Contact;
   notes: ContactNotes[];
   workspace: Workspace;
+  /** When true, omit the section title (e.g. when used inside an accordion) */
+  hideTitle?: boolean;
   /** MUI sx prop for the root Box */
   sx?: SxProps<Theme>;
 }
 
-export const ChatContactNotes = ({ contact, notes: _notes, workspace, sx }: Props) => {
+export const ChatContactNotes = ({
+  contact,
+  notes: _notes,
+  workspace,
+  hideTitle = false,
+  sx
+}: Props) => {
   const [notes, setNotes] = useState<ContactNotes[]>(_notes);
   const [selectedNote, setSelectedNote] = useState<ContactNotes | null>(null);
   const [open, setOpen] = useState(false);
@@ -30,12 +38,21 @@ export const ChatContactNotes = ({ contact, notes: _notes, workspace, sx }: Prop
   return (
     <>
       <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, ...(sx || {}) }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Contact Notes</Typography>
-          <IconButton color="primary" size="small">
-            <AddIcon onClick={handleOpen} />
-          </IconButton>
-        </Stack>
+        {!hideTitle && (
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Contact Notes</Typography>
+            <IconButton color="primary" size="small">
+              <AddIcon onClick={handleOpen} />
+            </IconButton>
+          </Stack>
+        )}
+        {hideTitle && (
+          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 1 }}>
+            <IconButton color="primary" size="small" onClick={handleOpen}>
+              <AddIcon />
+            </IconButton>
+          </Stack>
+        )}
 
         <Stack overflow={"auto"} gap={2} mb={2}>
           {notes.length === 0 && (

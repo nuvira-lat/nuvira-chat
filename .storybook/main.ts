@@ -20,9 +20,11 @@ const config: StorybookConfig = {
   },
   viteFinal: async (config) => {
     if (config.resolve) {
+      const projectRoot = path.resolve(__dirname, "..");
       config.resolve.alias = {
         ...config.resolve.alias,
-        "@": path.resolve(__dirname, "../src")
+        "@": path.resolve(projectRoot, "src"),
+        "@src": path.resolve(projectRoot, "src")
       };
     }
     return config;

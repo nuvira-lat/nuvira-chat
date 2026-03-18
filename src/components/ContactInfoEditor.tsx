@@ -28,11 +28,18 @@ import { logger } from "@/stubs/logger";
 interface ContactInfoEditorProps {
   workspace: Workspace;
   contact: Contact;
+  /** When true, omit the section title (e.g. when used inside an accordion) */
+  hideTitle?: boolean;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
 }
 
-export const ContactInfoEditor = ({ contact, workspace, sx }: ContactInfoEditorProps) => {
+export const ContactInfoEditor = ({
+  contact,
+  workspace,
+  hideTitle = false,
+  sx
+}: ContactInfoEditorProps) => {
   const [isEditingContact, setIsEditingContact] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [contactFields, setContactFields] = useState({
@@ -107,16 +114,38 @@ export const ContactInfoEditor = ({ contact, workspace, sx }: ContactInfoEditorP
 
   return (
     <Stack spacing={2} sx={sx}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6">Contact Information</Typography>
-        <Stack direction="row" spacing={1}>
-          {!isEditingContact && (
-            <Tooltip title="Edit contact information">
-              <IconButton size="small" onClick={() => setIsEditingContact(true)}>
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
+      {!hideTitle && (
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">Contact Information</Typography>
+          <Stack direction="row" spacing={1}>
+            {!isEditingContact && (
+              <Tooltip title="Edit contact information">
+                <IconButton size="small" onClick={() => setIsEditingContact(true)}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+            {populatedFieldCount > 1 && (
+              <Tooltip title={isExpanded ? "Collapse details" : "Show all details"}>
+                <IconButton size="small" onClick={toggleExpand}>
+                  {isExpanded ? (
+                    <ExpandLessIcon fontSize="small" />
+                  ) : (
+                    <ExpandMoreIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
+          </Stack>
+        </Stack>
+      )}
+      {hideTitle && !isEditingContact && (
+        <Stack direction="row" justifyContent="flex-end">
+          <Tooltip title="Edit contact information">
+            <IconButton size="small" onClick={() => setIsEditingContact(true)}>
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
           {populatedFieldCount > 1 && (
             <Tooltip title={isExpanded ? "Collapse details" : "Show all details"}>
               <IconButton size="small" onClick={toggleExpand}>
@@ -129,7 +158,7 @@ export const ContactInfoEditor = ({ contact, workspace, sx }: ContactInfoEditorP
             </Tooltip>
           )}
         </Stack>
-      </Stack>
+      )}
 
       {isEditingContact && (
         <Stack spacing={2}>

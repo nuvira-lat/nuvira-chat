@@ -61,29 +61,29 @@ nuvira-chat/
 
 ### 2.2 Component Dependency Matrix
 
-| Component | External Deps | Portable? | In Scope |
-|-----------|----------------|-----------|----------|
-| **TextMessage** | MUI only | ✅ | ✅ |
-| **ImageMessage** | MUI only | ✅ | ✅ |
-| **AudioMessage** | MUI only | ✅ | ✅ |
-| **VideoMessage** | MUI only | ✅ | ✅ |
-| **DocumentMessage** | MUI only | ✅ | ✅ |
-| **ChatMessage** | ppsFormatDate, useMediaUrl, logger, Prisma | ⚠️ | ✅ (refactor) |
-| **ChatInput** | PpsTextField, THEME_COLOR_PRIMARY | ⚠️ | ✅ (refactor) |
-| **ChatMessagesContainer** | ChatMessage, ChatAiCover, THEME_LIGHT_GREY, Prisma | ⚠️ | ✅ (refactor) |
-| **ChatAiCover** | LoadingAnimation, THEME_COLOR_PRIMARY | ⚠️ | ✅ (refactor) |
-| **ChatAgentSwitch** | MUI only | ✅ | ✅ |
-| ChatWindow, ChatWindowHeader, etc. | Many app-specific | ❌ | ❌ Excluded |
+| Component                          | External Deps                                      | Portable? | In Scope      |
+| ---------------------------------- | -------------------------------------------------- | --------- | ------------- |
+| **TextMessage**                    | MUI only                                           | ✅        | ✅            |
+| **ImageMessage**                   | MUI only                                           | ✅        | ✅            |
+| **AudioMessage**                   | MUI only                                           | ✅        | ✅            |
+| **VideoMessage**                   | MUI only                                           | ✅        | ✅            |
+| **DocumentMessage**                | MUI only                                           | ✅        | ✅            |
+| **ChatMessage**                    | ppsFormatDate, useMediaUrl, logger, Prisma         | ⚠️        | ✅ (refactor) |
+| **ChatInput**                      | PpsTextField, THEME_COLOR_PRIMARY                  | ⚠️        | ✅ (refactor) |
+| **ChatMessagesContainer**          | ChatMessage, ChatAiCover, THEME_LIGHT_GREY, Prisma | ⚠️        | ✅ (refactor) |
+| **ChatAiCover**                    | LoadingAnimation, THEME_COLOR_PRIMARY              | ⚠️        | ✅ (refactor) |
+| **ChatAgentSwitch**                | MUI only                                           | ✅        | ✅            |
+| ChatWindow, ChatWindowHeader, etc. | Many app-specific                                  | ❌        | ❌ Excluded   |
 
 ### 2.3 Key Design Decisions (Confirmed)
 
-| Decision | Value |
-|----------|--------|
-| **Hooks** | Library does NOT implement media resolution or message-sending hooks. Consuming app implements these. Library only defines prop interfaces. |
-| **Storybook** | All in-scope components must have Storybook stories. Stories use mock props only—no hooks required. |
-| **Source structure** | Move components into `src/` folder. Build output goes to `dist/`. |
-| **Package name** | @nuvira/chat-components |
-| **Architecture** | Single package (not monorepo) |
+| Decision             | Value                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hooks**            | Library does NOT implement media resolution or message-sending hooks. Consuming app implements these. Library only defines prop interfaces. |
+| **Storybook**        | All in-scope components must have Storybook stories. Stories use mock props only—no hooks required.                                         |
+| **Source structure** | Move components into `src/` folder. Build output goes to `dist/`.                                                                           |
+| **Package name**     | @nuvira/chat-components                                                                                                                     |
+| **Architecture**     | Single package (not monorepo)                                                                                                               |
 
 ---
 
@@ -178,6 +178,7 @@ export interface MediaState {
 ```
 
 **App responsibility:** Implement a hook (e.g., `useMediaUrl`) that:
+
 - Accepts a reference (CDN URL, S3 key, signed URL reference, etc.)
 - Returns `MediaState`
 - Handles CDN URLs (pass-through), signed URLs (API call), S3 keys (API call), etc.
@@ -199,7 +200,7 @@ export interface ChatInputProps {
 export interface MediaFile {
   file: File;
   type: "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT";
-  url: string;  // Object URL for preview
+  url: string; // Object URL for preview
 }
 ```
 
@@ -268,118 +269,118 @@ nuvira-chat/
 
 ### Phase 1: Project Setup & Structure
 
-| # | Task | Description |
-|---|------|-------------|
-| 1.1 | Create `package.json` | Name: `@nuvira/chat-components`, scripts for build, dev, storybook. Dependencies: MUI, lodash, Emotion. Peer deps: React, MUI. Dev deps: Storybook, tsup, TypeScript. |
-| 1.2 | Create `tsconfig.json` | Target ES2020, strict mode, jsx react-jsx, declaration. Include `src/**/*`. Exclude `node_modules`, `dist`, `stories`. |
-| 1.3 | Create `tsup.config.ts` | Entry: `src/index.ts`. Formats: cjs, esm. DTS. Externalize React, MUI, Emotion. |
-| 1.4 | Create `src/` folder structure | `src/types/`, `src/util/`, `src/components/` with subfolders per component. |
-| 1.5 | Create `src/types/index.ts` | Export `MessageType`, `Contact`, `ContactMessage`, `MediaState`, `MediaFile`. Replace Prisma types with library types. |
+| #   | Task                           | Description                                                                                                                                                           |
+| --- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1 | Create `package.json`          | Name: `@nuvira/chat-components`, scripts for build, dev, storybook. Dependencies: MUI, lodash, Emotion. Peer deps: React, MUI. Dev deps: Storybook, tsup, TypeScript. |
+| 1.2 | Create `tsconfig.json`         | Target ES2020, strict mode, jsx react-jsx, declaration. Include `src/**/*`. Exclude `node_modules`, `dist`, `stories`.                                                |
+| 1.3 | Create `tsup.config.ts`        | Entry: `src/index.ts`. Formats: cjs, esm. DTS. Externalize React, MUI, Emotion.                                                                                       |
+| 1.4 | Create `src/` folder structure | `src/types/`, `src/util/`, `src/components/` with subfolders per component.                                                                                           |
+| 1.5 | Create `src/types/index.ts`    | Export `MessageType`, `Contact`, `ContactMessage`, `MediaState`, `MediaFile`. Replace Prisma types with library types.                                                |
 
 ### Phase 2: Portable Utilities
 
-| # | Task | Description |
-|---|------|-------------|
+| #   | Task                            | Description                                                                       |
+| --- | ------------------------------- | --------------------------------------------------------------------------------- |
 | 2.1 | Add `src/util/ppsFormatDate.ts` | Copy from `util/ppsFormatDate.ts`. Update imports (lodash). No app-specific code. |
 
 ### Phase 3: Message Type Components (Zero Refactor)
 
-| # | Task | Description |
-|---|------|-------------|
+| #   | Task                                                | Description                                                                                                             |
+| --- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | 3.1 | Move MessageTypes to `src/components/MessageTypes/` | Copy TextMessage, ImageMessage, AudioMessage, VideoMessage, DocumentMessage. Update internal imports to relative paths. |
-| 3.2 | Create `src/components/MessageTypes/index.ts` | Barrel export all message types and their prop types. |
+| 3.2 | Create `src/components/MessageTypes/index.ts`       | Barrel export all message types and their prop types.                                                                   |
 
 ### Phase 4: ChatMessage Refactor
 
-| # | Task | Description |
-|---|------|-------------|
+| #   | Task                                             | Description                                                                                                                                                                 |
+| --- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 4.1 | Refactor ChatMessage to accept `mediaState` prop | Remove `useMediaUrl` usage. Add `mediaState?: MediaState` prop. For media message types, require `mediaState` from parent. Use `mediaState.url`, `mediaState.loading`, etc. |
-| 4.2 | Replace Prisma types | Use `Contact`, `ContactMessage`, `MessageType` from `src/types`. |
-| 4.3 | Replace ppsFormatDate import | Use `../util/ppsFormatDate` or `../../util/ppsFormatDate`. |
-| 4.4 | Remove logger | Remove or replace with optional `onDebug?: (info) => void` prop. |
-| 4.5 | Fix bugs | Pass `intent` to TextMessage. Fix typo "Unknonwn" → "Unknown". Fix corrupted JSDoc. |
-| 4.6 | Move to `src/components/ChatMessage/` | |
+| 4.2 | Replace Prisma types                             | Use `Contact`, `ContactMessage`, `MessageType` from `src/types`.                                                                                                            |
+| 4.3 | Replace ppsFormatDate import                     | Use `../util/ppsFormatDate` or `../../util/ppsFormatDate`.                                                                                                                  |
+| 4.4 | Remove logger                                    | Remove or replace with optional `onDebug?: (info) => void` prop.                                                                                                            |
+| 4.5 | Fix bugs                                         | Pass `intent` to TextMessage. Fix typo "Unknonwn" → "Unknown". Fix corrupted JSDoc.                                                                                         |
+| 4.6 | Move to `src/components/ChatMessage/`            |                                                                                                                                                                             |
 
 ### Phase 5: ChatInput Refactor
 
-| # | Task | Description |
-|---|------|-------------|
+| #   | Task                                    | Description                                                                           |
+| --- | --------------------------------------- | ------------------------------------------------------------------------------------- |
 | 5.1 | Replace PpsTextField with MUI TextField | Use `TextField` from `@mui/material`. Preserve multiline, adornments, disabled state. |
-| 5.2 | Replace THEME_COLOR_PRIMARY | Use `"primary.main"` from MUI theme (sx) or accept optional `primaryColor` prop. |
-| 5.3 | Export MediaFile type | Ensure `MediaFile` is exported from types or ChatInput. |
-| 5.4 | Move to `src/components/ChatInput/` | |
+| 5.2 | Replace THEME_COLOR_PRIMARY             | Use `"primary.main"` from MUI theme (sx) or accept optional `primaryColor` prop.      |
+| 5.3 | Export MediaFile type                   | Ensure `MediaFile` is exported from types or ChatInput.                               |
+| 5.4 | Move to `src/components/ChatInput/`     |                                                                                       |
 
 ### Phase 6: ChatAiCover Refactor
 
-| # | Task | Description |
-|---|------|-------------|
-| 6.1 | Replace LoadingAnimation | Use MUI `CircularProgress` or simple CSS dots animation. |
-| 6.2 | Replace THEME_COLOR_PRIMARY | Use `avatarColor` prop (default: `"primary.main"`). |
-| 6.3 | Add configurable branding | Add `label?: string` prop (default: e.g., "AI is talking with your contact"). |
-| 6.4 | Move to `src/components/ChatAiCover/` | |
+| #   | Task                                  | Description                                                                   |
+| --- | ------------------------------------- | ----------------------------------------------------------------------------- |
+| 6.1 | Replace LoadingAnimation              | Use MUI `CircularProgress` or simple CSS dots animation.                      |
+| 6.2 | Replace THEME_COLOR_PRIMARY           | Use `avatarColor` prop (default: `"primary.main"`).                           |
+| 6.3 | Add configurable branding             | Add `label?: string` prop (default: e.g., "AI is talking with your contact"). |
+| 6.4 | Move to `src/components/ChatAiCover/` |                                                                               |
 
 ### Phase 7: ChatMessagesContainer Refactor
 
-| # | Task | Description |
-|---|------|-------------|
-| 7.1 | Add `renderMessage` prop | `renderMessage?: (message: ContactMessage, contact: Contact) => ReactNode`. Default: render `ChatMessage` with `mediaState` derived from `message.mediaUrl` as pass-through for CDN URLs (or require `renderMessage` when media needs resolution). |
-| 7.2 | Replace THEME_LIGHT_GREY | Use MUI `grey[300]` or similar. |
-| 7.3 | Replace Prisma types | Use library types. |
-| 7.4 | Update ChatMessage import | Relative path to `../ChatMessage`. |
-| 7.5 | Move to `src/components/ChatMessagesContainer/` | |
+| #   | Task                                            | Description                                                                                                                                                                                                                                        |
+| --- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7.1 | Add `renderMessage` prop                        | `renderMessage?: (message: ContactMessage, contact: Contact) => ReactNode`. Default: render `ChatMessage` with `mediaState` derived from `message.mediaUrl` as pass-through for CDN URLs (or require `renderMessage` when media needs resolution). |
+| 7.2 | Replace THEME_LIGHT_GREY                        | Use MUI `grey[300]` or similar.                                                                                                                                                                                                                    |
+| 7.3 | Replace Prisma types                            | Use library types.                                                                                                                                                                                                                                 |
+| 7.4 | Update ChatMessage import                       | Relative path to `../ChatMessage`.                                                                                                                                                                                                                 |
+| 7.5 | Move to `src/components/ChatMessagesContainer/` |                                                                                                                                                                                                                                                    |
 
 ### Phase 8: ChatAgentSwitch
 
-| # | Task | Description |
-|---|------|-------------|
+| #   | Task                                      | Description            |
+| --- | ----------------------------------------- | ---------------------- |
 | 8.1 | Move to `src/components/ChatAgentSwitch/` | No refactor. MUI only. |
 
 ### Phase 9: Storybook Setup
 
-| # | Task | Description |
-|---|------|-------------|
-| 9.1 | Initialize Storybook | `npx storybook@latest init` (React, Vite, TypeScript). |
-| 9.2 | Configure `.storybook/main.ts` | Stories: `../stories/**/*.stories.@(js|jsx|ts|tsx)`. Addons: essentials, interactions, links. Framework: react-vite. |
-| 9.3 | Configure `.storybook/preview.tsx` | MUI ThemeProvider, CssBaseline. Layout centered. |
-| 9.4 | Move/copy MessageType stories | Update imports to library components. Use mock props. |
-| 9.5 | Update ChatMessage stories | Use `mediaState` prop with mock values. Replace Prisma types with library types. |
-| 9.6 | Create ChatInput stories | Placeholder, with media, disabled, loading states. |
-| 9.7 | Create ChatMessagesContainer stories | Empty, with messages, with AI cover. Use mock `renderMessage` or default. |
-| 9.8 | Create ChatAiCover stories | Default, custom label, custom color. |
-| 9.9 | Create ChatAgentSwitch stories | Off, on states. |
+| #   | Task                                 | Description                                                                      |
+| --- | ------------------------------------ | -------------------------------------------------------------------------------- | --- | --- | ---------------------------------------------------------------------- |
+| 9.1 | Initialize Storybook                 | `npx storybook@latest init` (React, Vite, TypeScript).                           |
+| 9.2 | Configure `.storybook/main.ts`       | Stories: `../stories/\*_/_.stories.@(js                                          | jsx | ts  | tsx)`. Addons: essentials, interactions, links. Framework: react-vite. |
+| 9.3 | Configure `.storybook/preview.tsx`   | MUI ThemeProvider, CssBaseline. Layout centered.                                 |
+| 9.4 | Move/copy MessageType stories        | Update imports to library components. Use mock props.                            |
+| 9.5 | Update ChatMessage stories           | Use `mediaState` prop with mock values. Replace Prisma types with library types. |
+| 9.6 | Create ChatInput stories             | Placeholder, with media, disabled, loading states.                               |
+| 9.7 | Create ChatMessagesContainer stories | Empty, with messages, with AI cover. Use mock `renderMessage` or default.        |
+| 9.8 | Create ChatAiCover stories           | Default, custom label, custom color.                                             |
+| 9.9 | Create ChatAgentSwitch stories       | Off, on states.                                                                  |
 
 ### Phase 10: Barrel Export & Build
 
-| # | Task | Description |
-|---|------|-------------|
-| 10.1 | Create `src/index.ts` | Export all components, types, util. |
-| 10.2 | Run build | `npm run build`. Verify `dist/` output. |
-| 10.3 | Run Storybook | `npm run storybook`. Verify all stories render. |
-| 10.4 | Add `.npmignore` | Exclude `src`, `stories`, `.storybook`, `*.stories.*`, `node_modules`. |
+| #    | Task                  | Description                                                            |
+| ---- | --------------------- | ---------------------------------------------------------------------- |
+| 10.1 | Create `src/index.ts` | Export all components, types, util.                                    |
+| 10.2 | Run build             | `npm run build`. Verify `dist/` output.                                |
+| 10.3 | Run Storybook         | `npm run storybook`. Verify all stories render.                        |
+| 10.4 | Add `.npmignore`      | Exclude `src`, `stories`, `.storybook`, `*.stories.*`, `node_modules`. |
 
 ### Phase 11: Documentation & Publish Prep
 
-| # | Task | Description |
-|---|------|-------------|
-| 11.1 | Update README | Installation, usage examples, prop interfaces for media and message sending. Document that app must implement hooks. |
-| 11.2 | Publish checklist | `npm run build`, `npm run build-storybook`, `npm publish --access public`. |
+| #    | Task              | Description                                                                                                          |
+| ---- | ----------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 11.1 | Update README     | Installation, usage examples, prop interfaces for media and message sending. Document that app must implement hooks. |
+| 11.2 | Publish checklist | `npm run build`, `npm run build-storybook`, `npm publish --access public`.                                           |
 
 ---
 
 ## 7. Out of Scope (Excluded Components)
 
-| Component | Reason |
-|-----------|--------|
-| ChatWindow | App-specific hooks, API, prisma |
-| ChatWindowHeader | PpsAvatar, ContactStatusChip, CustomStageDisplay |
-| ConsolidatedChatActions | FunnelStageSelector, ContactNotes |
-| FunnelStageSelector/* | CustomStageChip, CustomFunnelDisplay, Prisma |
-| ChatContactStatus/* | ContactStatusChip, ContactStatusSelector |
-| ContactNotes/* | ContactNoteCard, ContactNoteForm, PpsModal |
-| ContactInfoEditor | updateContactData, logger |
-| AISummary | LoadingAnimation, API calls |
-| ChatWindowSC | prisma, ChatWindow |
-| util/mediaUpload, getUser, getWorkspace, WorkspaceCookieSettter | App-specific |
+| Component                                                       | Reason                                           |
+| --------------------------------------------------------------- | ------------------------------------------------ |
+| ChatWindow                                                      | App-specific hooks, API, prisma                  |
+| ChatWindowHeader                                                | PpsAvatar, ContactStatusChip, CustomStageDisplay |
+| ConsolidatedChatActions                                         | FunnelStageSelector, ContactNotes                |
+| FunnelStageSelector/\*                                          | CustomStageChip, CustomFunnelDisplay, Prisma     |
+| ChatContactStatus/\*                                            | ContactStatusChip, ContactStatusSelector         |
+| ContactNotes/\*                                                 | ContactNoteCard, ContactNoteForm, PpsModal       |
+| ContactInfoEditor                                               | updateContactData, logger                        |
+| AISummary                                                       | LoadingAnimation, API calls                      |
+| ChatWindowSC                                                    | prisma, ChatWindow                               |
+| util/mediaUpload, getUser, getWorkspace, WorkspaceCookieSettter | App-specific                                     |
 
 ---
 
@@ -443,7 +444,7 @@ export enum MessageType {
   IMAGE = "IMAGE",
   AUDIO = "AUDIO",
   VIDEO = "VIDEO",
-  DOCUMENT = "DOCUMENT",
+  DOCUMENT = "DOCUMENT"
 }
 
 export interface ContactMessage {
@@ -491,4 +492,4 @@ export interface MediaFile {
 
 ---
 
-*End of Statement of Work*
+_End of Statement of Work_
