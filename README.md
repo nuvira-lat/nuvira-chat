@@ -1,6 +1,6 @@
 # @nuvira/chat-components
 
-React chat UI primitives for Nuvira: MUI-based theming and message-type renderers (text, image, audio, video, document).
+React chat UI primitives for Nuvira: MUI-based theming, message-type renderers (text, image, audio, video, document), and conversation list building blocks (`ChatList`, `ChatListItem`, `ContactBadgeGroup`).
 
 ## Install
 
@@ -44,12 +44,14 @@ export function App() {
 }
 ```
 
-### v0.1 public API
+### Public API
 
 - **Theme:** `createChatTheme`, `ChatThemeOptions`
 - **Message components:** `TextMessage`, `ImageMessage`, `AudioMessage`, `VideoMessage`, `DocumentMessage`, and their `*Props` types
+- **Conversation list:** `ChatList`, `ChatListItem`, `ChatListProps`, `ChatListItemProps`, `ChatListItemData`
+- **Contact badges:** `ContactBadgeGroup`, `ContactBadgeGroupProps` (status, funnel, and stage chips in one row)
 
-Additional chat shell and CRM-related components may be promoted in a future minor release.
+Other chat shell pieces (e.g. full `ChatWindow`) remain internal to this repo until explicitly exported.
 
 ## Development
 

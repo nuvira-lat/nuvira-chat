@@ -43,6 +43,7 @@ export const ChatSidebar = ({
   workspace,
   funnels,
   notes,
+  side = "left",
   sx
 }: ChatSidebarProps) => {
   const activeSections = sections ?? CHAT_SIDEBAR_SECTIONS;
@@ -177,9 +178,17 @@ export const ChatSidebar = ({
       sx={{
         width: "100%",
         minWidth: 0,
-        borderRightStyle: "solid",
-        borderRightColor: "grey.400",
-        borderRightWidth: "1px",
+        ...(side === "right"
+          ? {
+              borderLeftStyle: "solid",
+              borderLeftColor: "grey.400",
+              borderLeftWidth: "1px"
+            }
+          : {
+              borderRightStyle: "solid",
+              borderRightColor: "grey.400",
+              borderRightWidth: "1px"
+            }),
         p: 1,
         gap: 0,
         flex: 1,

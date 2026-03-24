@@ -1,4 +1,5 @@
 import type {
+  ChatListItemData,
   Contact,
   ContactMessage,
   ContactNotes,
@@ -155,6 +156,90 @@ export const mockStageChangeItem: ContactStatusHistory & {
   newStatus: "LEAD_CONTACTED",
   isAutomatic: false
 };
+
+const now = new Date();
+const hoursAgo = (h: number) => new Date(now.getTime() - h * 60 * 60 * 1000);
+const daysAgo = (d: number) => new Date(now.getTime() - d * 24 * 60 * 60 * 1000);
+
+/** Build a full `Contact` from a list row for demos and tests. */
+export function contactFromChatListItem(item: ChatListItemData, workspace: Workspace): Contact {
+  return {
+    ...mockContact,
+    id: item.id,
+    name: item.name,
+    status: item.status,
+    customFunnelId: item.customFunnelId ?? null,
+    customStageId: item.customStageId ?? null,
+    lastMessageErrored: item.lastMessageErrored ?? false,
+    lastMessageErrorReason: item.lastMessageErrorReason ?? null,
+    workspaceId: workspace.id
+  };
+}
+
+export const mockChatListItems: ChatListItemData[] = [
+  {
+    id: "contact-1",
+    name: "John Doe",
+    status: "LEAD_NEW",
+    customFunnelId: null,
+    customStageId: null,
+    lastMessageErrored: false,
+    lastMessageErrorReason: null,
+    subtitle: "Thanks, I'll review the proposal tomorrow.",
+    updatedAt: hoursAgo(2),
+    unreadCount: 2
+  },
+  {
+    id: "contact-2",
+    name: "Acme Corp — Billing",
+    status: "LEAD_CONTACTED",
+    customFunnelId: "funnel-1",
+    customStageId: "stage-1",
+    lastMessageErrored: false,
+    lastMessageErrorReason: null,
+    subtitle:
+      "This is a very long preview line that should ellipsize nicely in the list row without breaking the layout or overlapping the timestamp column.",
+    updatedAt: hoursAgo(5),
+    unreadCount: 0,
+    avatarUrl: "https://picsum.photos/seed/chatlist2/128/128"
+  },
+  {
+    id: "contact-3",
+    name: "Maria Garcia",
+    status: "LEAD_QUALIFIED",
+    customFunnelId: null,
+    customStageId: null,
+    lastMessageErrored: true,
+    lastMessageErrorReason: "Message failed to deliver",
+    subtitle: "Can we reschedule?",
+    updatedAt: daysAgo(1),
+    unreadCount: 1
+  },
+  {
+    id: "contact-4",
+    name: "Quiet Lead",
+    status: "LEAD_NEW",
+    customFunnelId: null,
+    customStageId: null,
+    lastMessageErrored: false,
+    lastMessageErrorReason: null,
+    subtitle: "👍",
+    updatedAt: daysAgo(3),
+    unreadCount: 0
+  },
+  {
+    id: "contact-5",
+    name: "Week-old thread",
+    status: "LEAD_NEW",
+    customFunnelId: "funnel-1",
+    customStageId: "stage-1",
+    lastMessageErrored: false,
+    lastMessageErrorReason: null,
+    subtitle: "Following up from last week",
+    updatedAt: daysAgo(10),
+    unreadCount: 100
+  }
+];
 
 export const mockFunnelChangeItem: ContactStatusHistory & {
   customStage?: CustomStage | null;

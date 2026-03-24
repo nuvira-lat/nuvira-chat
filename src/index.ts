@@ -3,8 +3,8 @@
  *
  * Chat message components for React with MUI theming support.
  *
- * v0.1 public API: theme helpers and message-type renderers. Additional
- * chat shell and CRM widgets remain internal until a future minor release.
+ * Public API: theme helpers, message-type renderers, conversation list primitives,
+ * and shared contact badge layout.
  */
 
 export { createChatTheme, type ChatThemeOptions } from "./theme";
@@ -21,3 +21,12 @@ export {
   type VideoMessageProps,
   type DocumentMessageProps
 } from "./components/MessageTypes";
+
+export {
+  ChatList,
+  ChatListItem,
+  type ChatListProps,
+  type ChatListItemProps
+} from "./components/ChatList";
+export { ContactBadgeGroup, type ContactBadgeGroupProps } from "./components/ContactBadgeGroup";
+export type { ChatListItemData } from "./types";

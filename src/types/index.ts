@@ -173,6 +173,29 @@ export interface ChatSidebarCustomSection {
   defaultExpanded?: boolean;
 }
 
+/**
+ * View model for a row in the conversation list. Composes contact-like fields with
+ * list-only optional fields (preview, time, unread). Does not require full `Contact`.
+ */
+export type ChatListItemData = Pick<
+  Contact,
+  | "id"
+  | "name"
+  | "status"
+  | "customFunnelId"
+  | "customStageId"
+  | "lastMessageErrored"
+  | "lastMessageErrorReason"
+> & {
+  /** Profile image URL; falls back to initials when absent */
+  avatarUrl?: string | null;
+  /** e.g. last message preview */
+  subtitle?: string;
+  /** Shown in trailing meta when provided */
+  updatedAt?: Date;
+  unreadCount?: number;
+};
+
 export interface ChatSidebarProps {
   contact: Contact;
   /** Sections to show, in order. Omit = show all in default order. */
@@ -189,6 +212,8 @@ export interface ChatSidebarProps {
   funnels?: CustomFunnel[];
   /** Required when notes is in sections */
   notes?: ContactNotes[];
+  /** Which edge of the chat column the sidebar sits on (affects the divider border). Default: left */
+  side?: "left" | "right";
   /** MUI sx prop for the root Stack */
   sx?: import("@mui/material/styles").SxProps<import("@mui/material/styles").Theme>;
 }

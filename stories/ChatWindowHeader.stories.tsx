@@ -76,3 +76,14 @@ export const WithCustomFunnel: Story = {
     loading: false
   }
 };
+
+export const AgentToggleHidden: Story = {
+  args: {
+    agentActive: false,
+    contact: mockContact,
+    activateAgent: fn(),
+    showAlert: false,
+    loading: false,
+    showAgentToggle: false
+  }
+};
