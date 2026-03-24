@@ -2,18 +2,37 @@
   "name": "@nuvira/chat-components",
   "version": "0.1.0",
   "description": "Chat message components for React (text, image, audio, video, document)",
+  "license": "MIT",
+  "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuvira-lat/nuvira-chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nuvira-lat/nuvira-chat/issues"
+  },
+  "homepage": "https://github.com/nuvira-lat/nuvira-chat#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "build": "tsup",
+    "prepublishOnly": "npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typecheck": "tsc --noEmit",
@@ -33,23 +52,24 @@
     "react-dom": ">=18.0.0"
   },
   "dependencies": {
-    "@emotion/react": ">=11.0.0",
-    "@emotion/styled": ">=11.0.0",
-    "@mui/icons-material": ">=5.0.0",
-    "@mui/material": ">=5.0.0",
     "date-fns": "^3.6.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@eslint/js": "^9.39.4",
-    "@storybook/addon-essentials": "^8.6.12",
-    "@storybook/addon-interactions": "^8.6.12",
-    "@storybook/addon-links": "^8.6.12",
-    "@storybook/blocks": "^8.6.12",
-    "@storybook/react": "^8.6.12",
-    "@storybook/react-vite": "^8.6.12",
-    "@storybook/test": "^8.6.12",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
+    "@storybook/addon-essentials": "8.6.18",
+    "@storybook/addon-interactions": "8.6.18",
+    "@storybook/addon-links": "8.6.18",
+    "@storybook/blocks": "8.6.18",
+    "@storybook/react": "8.6.18",
+    "@storybook/react-vite": "8.6.18",
+    "@storybook/test": "8.6.18",
     "@types/lodash": "^4.17.15",
+    "@types/node": "^25.5.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "eslint": "^9.39.4",
@@ -60,7 +80,8 @@
     "prettier": "^3.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "storybook": "^8.6.12",
+    "storybook": "8.6.18",
+    "tsup": "^8.5.1",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.57.1"
   }

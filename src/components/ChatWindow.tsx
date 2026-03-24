@@ -2,7 +2,15 @@
 
 import { Stack } from "@mui/material";
 import { useState, KeyboardEvent, useCallback } from "react";
-import { Contact, ContactMessage, ContactNotes, CustomFunnel, Workspace } from "@/types";
+import {
+  Contact,
+  ContactMessage,
+  ContactNotes,
+  CustomFunnel,
+  type ChatSidebarCustomSection,
+  type ChatSidebarSectionId,
+  Workspace
+} from "@/types";
 import isNil from "lodash/isNil";
 import cloneDeep from "lodash/cloneDeep";
 import { ChatMessagesContainer } from "./ChatMessagesContainer";
@@ -20,6 +28,12 @@ interface Props {
   funnels: CustomFunnel[];
   notes: ContactNotes[];
   workspace: Workspace;
+  /** Optional: which sidebar sections to show. Omit for full sidebar. */
+  sidebarSections?: ChatSidebarSectionId[];
+  /** Optional: custom sections to add to the sidebar. */
+  sidebarCustomSections?: ChatSidebarCustomSection[];
+  /** Optional: section IDs expanded on initial render. */
+  sidebarDefaultExpandedSections?: ChatSidebarSectionId[];
 }
 
 export const ChatWindow = ({
@@ -27,7 +41,10 @@ export const ChatWindow = ({
   contact: initialContact,
   workspace,
   funnels,
-  notes
+  notes,
+  sidebarSections,
+  sidebarCustomSections,
+  sidebarDefaultExpandedSections
 }: Props) => {
   const [agentActive, steAgentActive] = useState(initialContact.talkingToAgent);
   const [loading, setLoading] = useState(false);
@@ -192,10 +209,15 @@ export const ChatWindow = ({
     >
       {!isMobile && (
         <ConsolidatedChatActions
+          contact={contact}
           notes={notes}
           workspace={workspace}
-          contact={contact}
           funnels={funnels}
+          {...(sidebarSections && { sections: sidebarSections })}
+          {...(sidebarCustomSections && { customSections: sidebarCustomSections })}
+          {...(sidebarDefaultExpandedSections && {
+            defaultExpandedSections: sidebarDefaultExpandedSections
+          })}
         />
       )}
       <Stack width={{ xs: "100%", md: "80%" }} height={{ xs: "100vh", md: "auto" }}>

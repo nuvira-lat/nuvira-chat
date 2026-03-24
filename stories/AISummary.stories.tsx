@@ -6,7 +6,7 @@ import { mockContact } from "./fixtures";
 import { createFetchMock } from "./mockFetch";
 
 const meta: Meta<typeof AISummary> = {
-  title: "Components/Chat/AISummary",
+  title: "Chat/Primitives/AISummary",
   component: AISummary,
   decorators: [
     (Story) => {

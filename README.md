@@ -1,2 +1,81 @@
-# nuvira-chat
-Chat components for the Nuvira project. 
+# @nuvira/chat-components
+
+React chat UI primitives for Nuvira: MUI-based theming and message-type renderers (text, image, audio, video, document).
+
+## Install
+
+```bash
+npm install @nuvira/chat-components
+```
+
+### Peer dependencies
+
+The package expects your app to provide compatible versions of React, MUI, and Emotion (install these in your application; they are not bundled):
+
+- `react` and `react-dom` (>= 18)
+- `@mui/material` and `@mui/icons-material` (>= 5)
+- `@emotion/react` and `@emotion/styled` (>= 11)
+
+Runtime dependencies shipped with the package: `lodash`, `date-fns`.
+
+## Usage
+
+Wrap your app (or subtree) with MUI’s `ThemeProvider` and `CssBaseline`, using `createChatTheme` for defaults or overrides:
+
+```tsx
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import {
+  createChatTheme,
+  TextMessage,
+  type TextMessageProps,
+} from "@nuvira/chat-components";
+
+const theme = createChatTheme({
+  palette: { primary: { main: "#1976d2" } },
+});
+
+export function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <TextMessage message="Hello" intent="general_inquiry" />
+    </ThemeProvider>
+  );
+}
+```
+
+### v0.1 public API
+
+- **Theme:** `createChatTheme`, `ChatThemeOptions`
+- **Message components:** `TextMessage`, `ImageMessage`, `AudioMessage`, `VideoMessage`, `DocumentMessage`, and their `*Props` types
+
+Additional chat shell and CRM-related components may be promoted in a future minor release.
+
+## Development
+
+```bash
+npm install
+npm run storybook
+```
+
+Quality checks:
+
+```bash
+npm run check
+npm run build
+```
+
+## Publishing (maintainers)
+
+Publishing is manual. Before the first (or any) release:
+
+1. Ensure `main` is green (`npm run check`, `npm run build`).
+2. Bump `version` in `package.json` as appropriate.
+3. Inspect the tarball: `npm pack --dry-run`
+4. Publish: `npm publish` (scoped public access is set in `publishConfig`).
+
+`prepublishOnly` runs `npm run build` so the published package always includes a fresh `dist/`.
+
+## License
+
+MIT. See [LICENSE](./LICENSE).

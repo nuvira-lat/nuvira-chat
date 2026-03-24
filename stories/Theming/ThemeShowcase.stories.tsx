@@ -19,7 +19,7 @@ import { ConsolidatedChatActions } from "@/components/ConsolidatedChatActions";
 import { createFetchMock } from "../mockFetch";
 
 const meta: Meta = {
-  title: "Theming/Theme Showcase",
+  title: "Chat/Theming/Theme Showcase",
   parameters: {
     docs: {
       description: {

@@ -15,7 +15,7 @@ const mockRetryFunction = () => {
 };
 
 const meta: Meta<typeof ImageMessage> = {
-  title: "Components/Chat/MessageTypes/ImageMessage",
+  title: "Chat/Primitives/Messages/MessageTypes/ImageMessage",
   component: ImageMessage,
   decorators: [
     (Story) => (

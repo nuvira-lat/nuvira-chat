@@ -23,6 +23,8 @@ export interface AISummaryProps {
   contact: Contact;
   /** Whether the component is disabled */
   disabled?: boolean;
+  /** When true, omit the section title (e.g. when used inside an accordion) */
+  hideTitle?: boolean;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
 }
@@ -38,7 +40,7 @@ export interface AISummaryProps {
  * @param props.disabled - Whether summary generation is disabled
  * @returns JSX element containing the AI summary interface
  */
-export const AISummary = ({ contact, disabled = false, sx }: AISummaryProps) => {
+export const AISummary = ({ contact, disabled = false, hideTitle = false, sx }: AISummaryProps) => {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState(contact.aiNotesSummary);
 
@@ -75,9 +77,11 @@ export const AISummary = ({ contact, disabled = false, sx }: AISummaryProps) => 
 
   return (
     <Stack spacing={2} sx={sx}>
-      <Typography variant="h6" fontWeight={500}>
-        AI Summary
-      </Typography>
+      {!hideTitle && (
+        <Typography variant="h6" fontWeight={500}>
+          AI Summary
+        </Typography>
+      )}
       {isNil(summary) && (
         <Typography color="secondary.dark" fontWeight={400} variant="subtitle2">
           No summary generated yet.

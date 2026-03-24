@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { mockContact, mockContactNotes, mockWorkspace } from "../fixtures";
 
 const meta: Meta<typeof ChatContactNotes> = {
-  title: "Components/Chat/ContactNotes/ChatContactNotes",
+  title: "Chat/Primitives/ContactNotes/ChatContactNotes",
   component: ChatContactNotes,
   decorators: [
     (Story) => (

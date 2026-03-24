@@ -11,9 +11,11 @@ import { ContactStatusHistoryButton } from "./ContactStatusHistoryButton";
 
 interface Props {
   contact: Contact;
+  /** When true, omit the section title (e.g. when used inside an accordion) */
+  hideTitle?: boolean;
 }
 
-export const ChatContactStatus = ({ contact }: Props) => {
+export const ChatContactStatus = ({ contact, hideTitle = false }: Props) => {
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const edit = useCallback(() => {
@@ -65,9 +67,11 @@ export const ChatContactStatus = ({ contact }: Props) => {
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6">Contact Status</Typography>
-      </Stack>
+      {!hideTitle && (
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">Contact Status</Typography>
+        </Stack>
+      )}
       <Stack direction="row" spacing={1} alignItems="center">
         {isEditingStatus && (
           <>

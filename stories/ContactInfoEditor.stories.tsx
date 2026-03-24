@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { mockContact, mockWorkspace } from "./fixtures";
 
 const meta: Meta<typeof ContactInfoEditor> = {
-  title: "Components/Chat/ContactInfoEditor",
+  title: "Chat/Primitives/ContactInfoEditor",
   component: ContactInfoEditor,
   decorators: [
     (Story) => (
@@ -16,7 +16,8 @@ const meta: Meta<typeof ContactInfoEditor> = {
   parameters: {
     docs: {
       description: {
-        component: "Editable contact information (name, email, phone)."
+        component:
+          "Editable contact information (name, email, phone). Save is disabled until you make changes."
       }
     }
   }
@@ -29,19 +30,21 @@ type Story = StoryObj<typeof ContactInfoEditor>;
 export const Default: Story = {
   args: {
     contact: mockContact,
-    workspace: mockWorkspace
+    workspace: mockWorkspace,
+    variant: "standalone"
   }
 };
 
-export const Expanded: Story = {
+export const Sidebar: Story = {
   args: {
     contact: mockContact,
-    workspace: mockWorkspace
+    workspace: mockWorkspace,
+    variant: "sidebar"
   },
   parameters: {
     docs: {
       description: {
-        story: "Contact info with expanded details (user can expand to see more)."
+        story: "As used in ChatSidebar accordion (no title, compact layout)."
       }
     }
   }
