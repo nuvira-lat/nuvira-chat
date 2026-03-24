@@ -1,3 +1,7 @@
+/**
+ * Renders contact status, optional funnel, and optional stage chips in one row.
+ * Use with {@link ChatListItem} or {@link ChatWindowHeader} for consistent CRM badges.
+ */
 import type { ReactNode } from "react";
 import { Stack } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";

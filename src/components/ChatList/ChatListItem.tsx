@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Single conversation row: avatar (with unread badge), title, preview line, time,
+ * {@link ContactBadgeGroup}, and optional error hint. Uses `ListItemButton` for
+ * selection and keyboard focus.
+ */
 import type { ReactNode } from "react";
 import {
   Badge,
@@ -31,6 +36,7 @@ export interface ChatListItemProps {
   sx?: SxProps<Theme>;
 }
 
+/** One row in {@link ChatList}. */
 export function ChatListItem({ item, selected, onClick, slotBadges, sx }: ChatListItemProps) {
   const displayName = item.name ?? "Anon.";
   const hasError = item.lastMessageErrored === true || Boolean(item.lastMessageErrorReason);

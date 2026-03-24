@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Full chat shell: CRM sidebar (`ConsolidatedChatActions`), thread header, messages, input.
+ * Not exported from the npm package by default; documented here for contributors and
+ * Storybook. Supports `sidebarPosition`, collapsible CRM, `chatActionsMaxWidth`, `showAgentToggle`, etc.
+ */
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";

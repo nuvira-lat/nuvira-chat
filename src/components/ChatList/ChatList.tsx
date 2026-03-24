@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Scrollable list of conversations. Renders {@link ChatListItem} rows; parent supplies
+ * data, selection, and `onSelect`. Empty state is customizable via `emptyState`.
+ */
 import type { ReactNode } from "react";
 import { List, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
@@ -14,6 +18,7 @@ export interface ChatListProps {
   sx?: SxProps<Theme>;
 }
 
+/** MUI `List` of conversation rows with optional selection. */
 export function ChatList({ items, selectedId, onSelect, emptyState, sx }: ChatListProps) {
   if (items.length === 0) {
     return (

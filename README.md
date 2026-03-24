@@ -51,7 +51,84 @@ export function App() {
 - **Conversation list:** `ChatList`, `ChatListItem`, `ChatListProps`, `ChatListItemProps`, `ChatListItemData`
 - **Contact badges:** `ContactBadgeGroup`, `ContactBadgeGroupProps` (status, funnel, and stage chips in one row)
 
-Other chat shell pieces (e.g. full `ChatWindow`) remain internal to this repo until explicitly exported.
+Other chat shell pieces (e.g. full `ChatWindow`, `CollapsibleEdgePanel`) are implemented in this repo for Storybook and integration; they are not shipped in the npm `exports` until you add them to `src/index.ts`.
+
+### Conversation list and badges
+
+These components are **presentational**: your app owns fetching conversations, selection state, and routing.
+
+#### `ChatListItemData`
+
+Type for each row. It extends contact-like fields (`id`, `name`, `status`, `customFunnelId`, `customStageId`, `lastMessageErrored`, `lastMessageErrorReason`) with optional list fields:
+
+| Field | Purpose |
+| --- | --- |
+| `avatarUrl` | Image URL for the avatar; initials fallback when absent |
+| `subtitle` | Last message preview (single line, ellipsis) |
+| `updatedAt` | Shown as relative time (today / yesterday / date) |
+| `unreadCount` | Badge on the avatar when greater than 0 |
+
+#### `ChatList`
+
+Scrollable MUI `List` of `ChatListItem` rows.
+
+- **`items`** – `ChatListItemData[]`
+- **`selectedId`** – highlights the matching row
+- **`onSelect(id)`** – called when a row is activated
+- **`emptyState`** – custom node when `items` is empty (default copy: “No conversations”)
+- **`sx`** – root styles
+
+#### `ChatListItem`
+
+One conversation row: `ListItemButton`, avatar (with optional unread badge), name, optional subtitle/time, `ContactBadgeGroup`, and optional error icon when `lastMessageErrored` / `lastMessageErrorReason` is set.
+
+- **`item`** – `ChatListItemData`
+- **`selected`**, **`onClick`**, **`slotBadges`** (extra chips after the default badges), **`sx`**
+
+#### `ContactBadgeGroup`
+
+Single row of chips: contact status, then funnel and stage when IDs are present. Use **`slotEnd`** for extra chips (e.g. channel or “VIP”).
+
+### Example: list + selection
+
+```tsx
+import {
+  ChatList,
+  type ChatListItemData,
+} from "@nuvira/chat-components";
+
+const items: ChatListItemData[] = [
+  {
+    id: "c1",
+    name: "Ada",
+    status: "LEAD_NEW",
+    subtitle: "See you tomorrow",
+    updatedAt: new Date(),
+    unreadCount: 2,
+  },
+];
+
+export function Inbox() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  return (
+    <ChatList
+      items={items}
+      selectedId={selectedId}
+      onSelect={setSelectedId}
+      sx={{ maxHeight: 400 }}
+    />
+  );
+}
+```
+
+### Storybook and internal layout demos
+
+Run `npm run storybook` to see:
+
+- **Chat list** / **Chat list item** stories
+- **Chat list with ChatWindow** – composite layout (list + `ChatWindow`, collapsible panels, `sidebarPosition`, etc.)
+
+Those demos import components from `@/` paths in this repo; consumers of the published package only use the exports listed in `src/index.ts` unless you re-export more.
 
 ## Development
 
