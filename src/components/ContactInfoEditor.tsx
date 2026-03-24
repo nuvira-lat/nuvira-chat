@@ -1,53 +1,50 @@
-import { useState, useCallback } from "react";
-import {
-  Stack,
-  Typography,
-  Box,
-  IconButton,
-  TextField,
-  Button,
-  CircularProgress,
-  Tooltip,
-  Collapse,
-  Card,
-  CardContent
-} from "@mui/material";
+import { useState, useCallback, useEffect } from "react";
+import { Stack, Typography, Box, TextField, Button, CircularProgress } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact, Workspace } from "@/types";
-import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
-import PersonIcon from "@mui/icons-material/Person";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { updateContactData } from "@/stubs/updateContactData";
 import { logger } from "@/stubs/logger";
 
 interface ContactInfoEditorProps {
   workspace: Workspace;
   contact: Contact;
-  /** When true, omit the section title (e.g. when used inside an accordion) */
-  hideTitle?: boolean;
+  /** "sidebar" = no title, compact; "standalone" = optional title, full layout */
+  variant?: "sidebar" | "standalone";
+  /** Called after successful save */
+  onSave?: (data: { name: string; email: string | null; phone: string | null }) => void;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
 }
 
+const normalize = (v: string | null | undefined): string => v ?? "";
+
 export const ContactInfoEditor = ({
   contact,
   workspace,
-  hideTitle = false,
+  variant = "standalone",
+  onSave,
   sx
 }: ContactInfoEditorProps) => {
-  const [isEditingContact, setIsEditingContact] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [contactFields, setContactFields] = useState({
     name: contact.name || "",
     email: contact.email || "",
     phone: contact.phone || ""
   });
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setContactFields({
+      name: contact.name || "",
+      email: contact.email || "",
+      phone: contact.phone || ""
+    });
+  }, [contact.id, contact.name, contact.email, contact.phone]);
+
+  const isDirty =
+    normalize(contactFields.name) !== normalize(contact.name) ||
+    normalize(contactFields.email) !== normalize(contact.email) ||
+    normalize(contactFields.phone) !== normalize(contact.phone);
 
   const handleContactFieldChange = useCallback((field: string, value: string) => {
     setContactFields((prev) => ({ ...prev, [field]: value }));
@@ -63,7 +60,7 @@ export const ContactInfoEditor = ({
     try {
       await updateContactData({
         id,
-        name: contactFields.name ?? contactFields.name ?? "Anon.",
+        name: contactFields.name ?? "Anon.",
         email: contactFields.email || null,
         phone: contactFields.phone || null,
         workspaceId: workspace.id,
@@ -71,242 +68,135 @@ export const ContactInfoEditor = ({
         website: null,
         description: null
       });
-      setIsEditingContact(false);
+      setContactFields({
+        name: contactFields.name ?? "Anon.",
+        email: contactFields.email || "",
+        phone: contactFields.phone || ""
+      });
+      onSave?.({
+        name: contactFields.name ?? "Anon.",
+        email: contactFields.email || null,
+        phone: contactFields.phone || null
+      });
     } catch (error) {
       logger.error("Failed to save contact:", error);
     } finally {
       setIsSaving(false);
     }
-  }, [contact.id, contactFields.email, contactFields.name, contactFields.phone, workspace.id]);
+  }, [
+    contact.id,
+    contactFields.email,
+    contactFields.name,
+    contactFields.phone,
+    workspace.id,
+    onSave
+  ]);
 
-  const handleCancelEdit = useCallback(() => {
+  const handleRevert = useCallback(() => {
     setContactFields({
       name: contact.name || "",
       email: contact.email || "",
       phone: contact.phone || ""
     });
-    setIsEditingContact(false);
   }, [contact.name, contact.email, contact.phone]);
 
-  const handleKeyPress = useCallback(
+  const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       if (event.key === "Enter" && event.ctrlKey) {
-        handleSaveContact();
+        event.preventDefault();
+        if (isDirty && !isSaving) handleSaveContact();
       } else if (event.key === "Escape") {
-        handleCancelEdit();
+        handleRevert();
       }
     },
-    [handleSaveContact, handleCancelEdit]
+    [handleSaveContact, handleRevert, isDirty, isSaving]
   );
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  // Count how many fields have data
-  const populatedFieldCount = [
-    contact.name,
-    contact.email,
-    contact.phone,
-    contact.company,
-    contact.website
-  ].filter(Boolean).length;
 
   return (
     <Stack spacing={2} sx={sx}>
-      {!hideTitle && (
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Contact Information</Typography>
-          <Stack direction="row" spacing={1}>
-            {!isEditingContact && (
-              <Tooltip title="Edit contact information">
-                <IconButton size="small" onClick={() => setIsEditingContact(true)}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )}
-            {populatedFieldCount > 1 && (
-              <Tooltip title={isExpanded ? "Collapse details" : "Show all details"}>
-                <IconButton size="small" onClick={toggleExpand}>
-                  {isExpanded ? (
-                    <ExpandLessIcon fontSize="small" />
-                  ) : (
-                    <ExpandMoreIcon fontSize="small" />
-                  )}
-                </IconButton>
-              </Tooltip>
-            )}
-          </Stack>
-        </Stack>
-      )}
-      {hideTitle && !isEditingContact && (
-        <Stack direction="row" justifyContent="flex-end">
-          <Tooltip title="Edit contact information">
-            <IconButton size="small" onClick={() => setIsEditingContact(true)}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          {populatedFieldCount > 1 && (
-            <Tooltip title={isExpanded ? "Collapse details" : "Show all details"}>
-              <IconButton size="small" onClick={toggleExpand}>
-                {isExpanded ? (
-                  <ExpandLessIcon fontSize="small" />
-                ) : (
-                  <ExpandMoreIcon fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+      {variant === "standalone" && <Typography variant="h6">Contact Information</Typography>}
+
+      <Stack spacing={2}>
+        <TextField
+          label="Name"
+          variant="outlined"
+          size="small"
+          fullWidth
+          value={contactFields.name}
+          onChange={(e) => handleContactFieldChange("name", e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="No name provided"
+        />
+        <TextField
+          label="Email"
+          variant="outlined"
+          size="small"
+          fullWidth
+          type="email"
+          value={contactFields.email}
+          onChange={(e) => handleContactFieldChange("email", e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <TextField
+          label="Phone"
+          variant="outlined"
+          size="small"
+          fullWidth
+          value={contactFields.phone}
+          onChange={(e) => handleContactFieldChange("phone", e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handleSaveContact}
+          disabled={!isDirty || isSaving}
+          startIcon={isSaving ? <CircularProgress size={16} /> : <SaveIcon />}
+          fullWidth
+        >
+          {isSaving ? "Saving..." : "Save"}
+        </Button>
+
+        <Typography variant="caption" color="text.secondary">
+          Tip: Press Ctrl+Enter to save, Esc to revert
+        </Typography>
+      </Stack>
+
+      {(contact.company || contact.website) && (
+        <Stack spacing={1} sx={{ mt: 1 }}>
+          {contact.company && (
+            <Box sx={{ ml: 0.5 }}>
+              <Typography variant="body2" color="text.secondary">
+                Company:{" "}
+                <Typography component="span" variant="body2" color="text.primary">
+                  {contact.company}
+                </Typography>
+              </Typography>
+            </Box>
+          )}
+          {contact.website && (
+            <Box sx={{ ml: 0.5 }}>
+              <Typography variant="body2" color="text.secondary">
+                Website:{" "}
+                <Typography
+                  component="a"
+                  variant="body2"
+                  href={
+                    contact.website.startsWith("http")
+                      ? contact.website
+                      : `https://${contact.website}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ color: "primary.main" }}
+                >
+                  {contact.website}
+                </Typography>
+              </Typography>
+            </Box>
           )}
         </Stack>
-      )}
-
-      {isEditingContact && (
-        <Stack spacing={2}>
-          <TextField
-            label="Name"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={contactFields.name}
-            onChange={(e) => handleContactFieldChange("name", e.target.value)}
-            onKeyDown={handleKeyPress}
-            autoFocus
-          />
-          <TextField
-            label="Email"
-            variant="outlined"
-            size="small"
-            fullWidth
-            type="email"
-            value={contactFields.email}
-            onChange={(e) => handleContactFieldChange("email", e.target.value)}
-            onKeyDown={handleKeyPress}
-          />
-          <TextField
-            label="Phone"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={contactFields.phone}
-            onChange={(e) => handleContactFieldChange("phone", e.target.value)}
-            onKeyDown={handleKeyPress}
-          />
-          <Stack direction="row" spacing={1} justifyContent="flex-end">
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleCancelEdit}
-              disabled={isSaving}
-              startIcon={<CancelIcon />}
-              fullWidth
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={handleSaveContact}
-              disabled={isSaving}
-              startIcon={isSaving ? <CircularProgress size={16} /> : <SaveIcon />}
-              fullWidth
-            >
-              {isSaving ? "Saving..." : "Save"}
-            </Button>
-          </Stack>
-          <Typography variant="caption" color="text.secondary">
-            Tip: Press Ctrl+Enter to save, Esc to cancel
-          </Typography>
-        </Stack>
-      )}
-      {!isEditingContact && (
-        <Card variant="outlined">
-          <CardContent sx={{ py: 1.5, px: 2, "&:last-child": { pb: 1.5 } }}>
-            {/* Always visible summary */}
-            <Stack direction="row" spacing={1} alignItems="center">
-              {contact.name ? (
-                <PersonIcon fontSize="small" color="primary" />
-              ) : (
-                <PersonIcon fontSize="small" color="disabled" />
-              )}
-              <Typography
-                variant="body1"
-                sx={{
-                  fontWeight: contact.name ? 500 : 400,
-                  color: contact.name ? "text.primary" : "text.secondary",
-                  fontStyle: contact.name ? "normal" : "italic"
-                }}
-              >
-                {contact.name || "No name provided"}
-              </Typography>
-            </Stack>
-
-            {/* Expandable details */}
-            <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-              <Stack spacing={1.5} sx={{ mt: 1.5 }}>
-                {contact.email && (
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <EmailIcon fontSize="small" color="primary" />
-                    <Typography
-                      variant="body2"
-                      component="a"
-                      href={`mailto:${contact.email}`}
-                      sx={{ color: "primary.main", textDecoration: "none" }}
-                    >
-                      {contact.email}
-                    </Typography>
-                  </Stack>
-                )}
-
-                {contact.phone && (
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <PhoneIcon fontSize="small" color="primary" />
-                    <Typography
-                      variant="body2"
-                      component="a"
-                      href={`tel:${contact.phone}`}
-                      sx={{ color: "primary.main", textDecoration: "none" }}
-                    >
-                      {contact.phone}
-                    </Typography>
-                  </Stack>
-                )}
-
-                {contact.company && (
-                  <Box sx={{ ml: 3.5 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Company:{" "}
-                      <Typography component="span" variant="body2" color="text.primary">
-                        {contact.company}
-                      </Typography>
-                    </Typography>
-                  </Box>
-                )}
-
-                {contact.website && (
-                  <Box sx={{ ml: 3.5 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Website:{" "}
-                      <Typography
-                        component="a"
-                        variant="body2"
-                        href={
-                          contact.website.startsWith("http")
-                            ? contact.website
-                            : `https://${contact.website}`
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ color: "primary.main" }}
-                      >
-                        {contact.website}
-                      </Typography>
-                    </Typography>
-                  </Box>
-                )}
-              </Stack>
-            </Collapse>
-          </CardContent>
-        </Card>
       )}
     </Stack>
   );

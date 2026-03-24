@@ -107,7 +107,7 @@ export const ChatSidebar = ({
         return <ChatContactStatus contact={contact} hideTitle />;
       case "infoEditor":
         return workspace ? (
-          <ContactInfoEditor contact={contact} workspace={workspace} hideTitle />
+          <ContactInfoEditor contact={contact} workspace={workspace} variant="sidebar" />
         ) : null;
       case "funnelStage":
         if (!funnels) return null;
