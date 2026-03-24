@@ -10,7 +10,8 @@ import {
   ListItemText,
   Chip,
   Box,
-  Typography
+  Typography,
+  type InputProps
 } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { ChangeEvent, useState, KeyboardEvent, useRef, useCallback } from "react";
@@ -38,8 +39,8 @@ interface Props {
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
-  /** MUI slotProps for the TextField input - merged with internal adornments */
-  slotProps?: { input?: Record<string, unknown> };
+  /** Extra TextField input props (merged with internal adornments). Mirrors MUI v6 `slotProps.input` for MUI v5 `InputProps`. */
+  slotProps?: { input?: Partial<InputProps> };
 }
 
 export const ChatInput = ({
@@ -193,33 +194,31 @@ export const ChatInput = ({
           maxRows={5}
           disabled={isDisabled}
           sx={isDisabled ? { backgroundColor: "grey.200" } : {}}
-          slotProps={{
-            input: {
-              ...slotPropsProp?.input,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton
-                    onClick={handleAttachClick}
-                    disabled={isDisabled}
-                    sx={{ color: isDisabled ? "grey.500" : primaryColor }}
-                    size="small"
-                  >
-                    <AttachFileIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleSubmit}
-                    disabled={isDisabled || (!message?.trim() && !selectedMedia)}
-                    sx={{ color: isDisabled ? "grey.500" : primaryColor }}
-                  >
-                    <SendIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }
+          InputProps={{
+            ...slotPropsProp?.input,
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconButton
+                  onClick={handleAttachClick}
+                  disabled={isDisabled}
+                  sx={{ color: isDisabled ? "grey.500" : primaryColor }}
+                  size="small"
+                >
+                  <AttachFileIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={handleSubmit}
+                  disabled={isDisabled || (!message?.trim() && !selectedMedia)}
+                  sx={{ color: isDisabled ? "grey.500" : primaryColor }}
+                >
+                  <SendIcon />
+                </IconButton>
+              </InputAdornment>
+            )
           }}
         />
       </Tooltip>
