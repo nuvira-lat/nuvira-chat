@@ -70,15 +70,19 @@ export const ChatSidebar = ({
     title,
     icon,
     defaultExpanded,
+    disabled,
     children
   }: {
     title: string;
     icon: ReactNode;
     defaultExpanded: boolean;
+    /** When true, the section accordion is non-interactive (MUI Accordion disabled). */
+    disabled?: boolean;
     children: ReactNode;
   }) => (
     <Accordion
       defaultExpanded={defaultExpanded}
+      disabled={disabled}
       disableGutters
       sx={{ width: "100%", "&:before": { display: "none" } }}
     >
@@ -115,9 +119,7 @@ export const ChatSidebar = ({
           <FunnelStageSelector contact={contact} funnels={funnels} disabled={config?.disabled} />
         );
       case "aiSummary":
-        return (
-          <AISummary contact={contact} disabled={sectionConfig?.aiSummary?.disabled} hideTitle />
-        );
+        return <AISummary contact={contact} disabled={config?.disabled} hideTitle />;
       case "notes":
         return notes && workspace ? (
           <ChatContactNotes contact={contact} notes={notes} workspace={workspace} hideTitle />
@@ -134,6 +136,7 @@ export const ChatSidebar = ({
     title: string;
     icon: ReactNode;
     defaultExpanded: boolean;
+    disabled: boolean;
     content: ReactNode;
   }> = [
     ...startCustoms.map((c) => ({
@@ -141,6 +144,7 @@ export const ChatSidebar = ({
       title: c.title ?? "Custom",
       icon: c.icon ?? CHAT_SIDEBAR_DEFAULT_CUSTOM_ICON,
       defaultExpanded: c.defaultExpanded ?? false,
+      disabled: false,
       content: renderCustomSectionContent(c)
     })),
     ...activeSections.flatMap((sectionId) => {
@@ -153,6 +157,7 @@ export const ChatSidebar = ({
           title: getSectionTitle(sectionId, config),
           icon: getSectionIcon(sectionId, config),
           defaultExpanded: getDefaultExpanded(`built-in-${sectionId}`, config),
+          disabled: config?.disabled ?? false,
           content
         }
       ];
@@ -162,6 +167,7 @@ export const ChatSidebar = ({
       title: c.title ?? "Custom",
       icon: c.icon ?? CHAT_SIDEBAR_DEFAULT_CUSTOM_ICON,
       defaultExpanded: c.defaultExpanded ?? false,
+      disabled: false,
       content: renderCustomSectionContent(c)
     }))
   ];
@@ -182,8 +188,14 @@ export const ChatSidebar = ({
         ...(sx || {})
       }}
     >
-      {allItems.map(({ key, title, icon, defaultExpanded, content }) => (
-        <AccordionSection key={key} title={title} icon={icon} defaultExpanded={defaultExpanded}>
+      {allItems.map(({ key, title, icon, defaultExpanded, disabled, content }) => (
+        <AccordionSection
+          key={key}
+          title={title}
+          icon={icon}
+          defaultExpanded={defaultExpanded}
+          disabled={disabled}
+        >
           {content}
         </AccordionSection>
       ))}

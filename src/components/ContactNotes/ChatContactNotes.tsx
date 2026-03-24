@@ -41,8 +41,8 @@ export const ChatContactNotes = ({
         {!hideTitle && (
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="h6">Contact Notes</Typography>
-            <IconButton color="primary" size="small">
-              <AddIcon onClick={handleOpen} />
+            <IconButton color="primary" size="small" onClick={handleOpen}>
+              <AddIcon />
             </IconButton>
           </Stack>
         )}

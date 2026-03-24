@@ -19,6 +19,12 @@ interface ContactInfoEditorProps {
 
 const normalize = (v: string | null | undefined): string => v ?? "";
 
+/** Persisted name: blank or whitespace-only input becomes "Anon." */
+const nameForSave = (raw: string): string => {
+  const t = raw.trim();
+  return t === "" ? "Anon." : t;
+};
+
 export const ContactInfoEditor = ({
   contact,
   workspace,
@@ -42,7 +48,7 @@ export const ContactInfoEditor = ({
   }, [contact.id, contact.name, contact.email, contact.phone]);
 
   const isDirty =
-    normalize(contactFields.name) !== normalize(contact.name) ||
+    nameForSave(contactFields.name) !== nameForSave(contact.name || "") ||
     normalize(contactFields.email) !== normalize(contact.email) ||
     normalize(contactFields.phone) !== normalize(contact.phone);
 
@@ -58,25 +64,28 @@ export const ContactInfoEditor = ({
     }
     setIsSaving(true);
     try {
+      const savedName = nameForSave(contactFields.name);
+      const savedEmail = contactFields.email || null;
+      const savedPhone = contactFields.phone || null;
       await updateContactData({
         id,
-        name: contactFields.name ?? "Anon.",
-        email: contactFields.email || null,
-        phone: contactFields.phone || null,
+        name: savedName,
+        email: savedEmail,
+        phone: savedPhone,
         workspaceId: workspace.id,
         company: null,
         website: null,
         description: null
       });
       setContactFields({
-        name: contactFields.name ?? "Anon.",
+        name: savedName === "Anon." ? "" : savedName,
         email: contactFields.email || "",
         phone: contactFields.phone || ""
       });
       onSave?.({
-        name: contactFields.name ?? "Anon.",
-        email: contactFields.email || null,
-        phone: contactFields.phone || null
+        name: savedName,
+        email: savedEmail,
+        phone: savedPhone
       });
     } catch (error) {
       logger.error("Failed to save contact:", error);

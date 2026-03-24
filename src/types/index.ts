@@ -147,7 +147,10 @@ export interface ChatSidebarSectionConfig {
   title?: string;
   /** Optional icon for the accordion header. Uses default when omitted. */
   icon?: ReactNode;
-  /** Disable the section (e.g. AISummary disabled) */
+  /**
+   * Disables the section accordion (non-interactive header). Also passed to built-in
+   * section content where applicable (e.g. FunnelStageSelector, AISummary generate button).
+   */
   disabled?: boolean;
   /** Replace built-in content with custom ReactNode */
   slot?: ReactNode;
