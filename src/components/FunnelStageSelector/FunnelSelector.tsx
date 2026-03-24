@@ -12,7 +12,7 @@ import {
 import { Contact, CustomFunnel, CustomStage } from "@/types";
 import { useCallback } from "react";
 
-interface Props {
+export interface FunnelSelectorProps {
   activeFunnels: CustomFunnel[];
   contact: Contact;
   disabled?: boolean;
@@ -33,7 +33,7 @@ export const FunnelSelector = ({
   setSelectedStage,
   setUpdating,
   updating
-}: Props) => {
+}: FunnelSelectorProps) => {
   const handleChange = useCallback(
     async (e: SelectChangeEvent) => {
       const funnelId = e.target.value;

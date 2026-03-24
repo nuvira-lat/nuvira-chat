@@ -1,7 +1,7 @@
 {
   "name": "@nuvira/chat-components",
-  "version": "0.1.1",
-  "description": "Chat UI for React: MUI theme, message renderers, conversation list (ChatList), and contact badges",
+  "version": "0.1.2",
+  "description": "Chat UI for React: MUI theme, message renderers, conversation list, CRM sidebar, chat shell (ChatWindow), and contact badges",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/index.js",

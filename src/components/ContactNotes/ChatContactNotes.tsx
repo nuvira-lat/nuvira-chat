@@ -9,7 +9,7 @@ import { useCallback, useState } from "react";
 import { ContactNoteForm } from "@/stubs/ContactNoteForm";
 import { NvModal } from "@/stubs/NvModal";
 
-interface Props {
+export interface ChatContactNotesProps {
   contact: Contact;
   notes: ContactNotes[];
   workspace: Workspace;
@@ -25,7 +25,7 @@ export const ChatContactNotes = ({
   workspace,
   hideTitle = false,
   sx
-}: Props) => {
+}: ChatContactNotesProps) => {
   const [notes, setNotes] = useState<ContactNotes[]>(_notes);
   const [selectedNote, setSelectedNote] = useState<ContactNotes | null>(null);
   const [open, setOpen] = useState(false);

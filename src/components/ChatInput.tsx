@@ -24,18 +24,18 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 
-interface MediaFile {
+export interface ChatInputMediaFile {
   file: File;
   type: "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT";
   url: string;
 }
 
-interface Props {
+export interface ChatInputProps {
   message: string | null;
   agentActive: boolean;
   loading?: boolean;
   onMessageChange: (message: string) => void;
-  onSubmit: (message: string | null, mediaFile?: MediaFile) => Promise<void>;
+  onSubmit: (message: string | null, mediaFile?: ChatInputMediaFile) => Promise<void>;
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
@@ -52,9 +52,9 @@ export const ChatInput = ({
   onKeyDown,
   sx,
   slotProps: slotPropsProp
-}: Props) => {
+}: ChatInputProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedMedia, setSelectedMedia] = useState<MediaFile | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<ChatInputMediaFile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentFileType, setCurrentFileType] = useState<
     "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | null

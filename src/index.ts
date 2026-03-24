@@ -1,7 +1,6 @@
 /**
- * @nuvira/chat-components — published entry: theme, message renderers,
- * `ChatList` / `ChatListItem`, `ContactBadgeGroup`, `ChatListItemData`.
- * See README “Conversation list and badges”.
+ * @nuvira/chat-components — theme, message renderers, conversation list, CRM sidebar,
+ * chat shell, and shared types. See README “Public API”.
  */
 
 export { createChatTheme, type ChatThemeOptions } from "./theme";
@@ -19,7 +18,6 @@ export {
   type DocumentMessageProps
 } from "./components/MessageTypes";
 
-/** Conversation list and row; see README “Conversation list and badges”. */
 export {
   ChatList,
   ChatListItem,
@@ -27,8 +25,98 @@ export {
   type ChatListItemProps
 } from "./components/ChatList";
 
-/** Status + funnel + stage chips in one horizontal group. */
 export { ContactBadgeGroup, type ContactBadgeGroupProps } from "./components/ContactBadgeGroup";
 
-/** View model for each {@link ChatList} row. */
-export type { ChatListItemData } from "./types";
+export {
+  CollapsibleEdgePanel,
+  type CollapsibleEdgePanelProps
+} from "./components/CollapsibleEdgePanel";
+export { ChatAgentSwitch } from "./components/Agent/ChatAgentSwitch";
+export { ChatAiCover } from "./components/Agent/ChatAiCover";
+
+export { ChatMessage, type ChatMessageProps } from "./components/ChatMessage";
+export {
+  ChatMessagesContainer,
+  type ChatMessagesContainerProps
+} from "./components/ChatMessagesContainer";
+export { ChatInput, type ChatInputProps, type ChatInputMediaFile } from "./components/ChatInput";
+export { ChatWindowHeader, type ChatWindowHeaderProps } from "./components/ChatWindowHeader";
+export { ChatWindow, type ChatWindowProps } from "./components/ChatWindow";
+
+export { AISummary, type AISummaryProps } from "./components/AISummary";
+
+export {
+  FunnelStageSelector,
+  type FunnelStageSelectorProps
+} from "./components/FunnelStageSelector/FunnelStageSelector";
+export {
+  FunnelSelector,
+  type FunnelSelectorProps
+} from "./components/FunnelStageSelector/FunnelSelector";
+export {
+  StageSelector,
+  type StageSelectorProps
+} from "./components/FunnelStageSelector/StageSelector";
+
+export {
+  ChatContactStatus,
+  type ChatContactStatusProps
+} from "./components/ChatContactStatus/ChatContactStatus";
+export {
+  StatusChangeDisplay,
+  type StatusChangeDisplayProps
+} from "./components/ChatContactStatus/StatusChangeDisplay";
+export {
+  ContactStatusHistoryList,
+  type ContactStatusHistoryListProps
+} from "./components/ChatContactStatus/ContactStatusHistoryList";
+export {
+  ContactStatusHistoryButton,
+  type ContactStatusHistoryButtonProps
+} from "./components/ChatContactStatus/ContactStatusHistoryButton";
+
+export { ContactInfoEditor, type ContactInfoEditorProps } from "./components/ContactInfoEditor";
+export {
+  ChatContactNotes,
+  type ChatContactNotesProps
+} from "./components/ContactNotes/ChatContactNotes";
+
+export { ChatSidebar, ConsolidatedChatActions } from "./components/ConsolidatedChatActions";
+
+export {
+  MessageType,
+  CHAT_SIDEBAR_SECTIONS,
+  CHAT_SIDEBAR_SIMPLE,
+  CHAT_SIDEBAR_STANDARD,
+  CHAT_SIDEBAR_FULL,
+  CHAT_SIDEBAR_SECTION_TITLES
+} from "./types";
+
+export type {
+  Contact,
+  ContactMessage,
+  ContactNotes,
+  Workspace,
+  CustomStage,
+  CustomFunnel,
+  ContactStatusHistory,
+  ContactStatus,
+  MediaState,
+  MediaFile,
+  ChatListItemData,
+  ChatSidebarSectionId,
+  ChatSidebarSectionConfig,
+  ChatSidebarCustomSection,
+  ChatSidebarProps
+} from "./types";
+
+export {
+  fetchContactStatusHistoryDefault,
+  type ContactStatusHistoryListItem
+} from "./stubs/contactStatusHistory";
+
+export type { UseTimelineStreamOptions } from "./stubs/useWorkspaceStream";
+export { useTimelineStream } from "./stubs/useWorkspaceStream";
+export { useIsMobile } from "./stubs/isMobile";
+export { uploadMediaFileWithUrls } from "./stubs/mediaUpload";
+export { CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE } from "./stubs/broadcast";

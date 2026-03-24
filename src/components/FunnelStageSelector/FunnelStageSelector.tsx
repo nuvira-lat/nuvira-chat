@@ -9,14 +9,19 @@ import { getStages } from "./utility/getStages";
 import isNil from "lodash/isNil";
 import { logger } from "@/stubs/logger";
 
-interface Props {
+export interface FunnelStageSelectorProps {
   contact: Contact;
   disabled?: boolean;
   funnels: CustomFunnel[];
   workspaceId?: string;
 }
 
-export const FunnelStageSelector = ({ contact, disabled, funnels, workspaceId }: Props) => {
+export const FunnelStageSelector = ({
+  contact,
+  disabled,
+  funnels,
+  workspaceId
+}: FunnelStageSelectorProps) => {
   const contactFunnel = useMemo(() => {
     return funnels.find((f) => f.id === contact.customFunnelId);
   }, [contact.customFunnelId, funnels]);

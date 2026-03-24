@@ -8,14 +8,22 @@ import { ContactStatusSelector } from "@/stubs/contact/ContactStatusSelector";
 import { logger } from "@/stubs/logger";
 import { Contact, ContactStatus } from "@/types";
 import { ContactStatusHistoryButton } from "./ContactStatusHistoryButton";
+import type { ContactStatusHistoryListProps } from "./ContactStatusHistoryList";
+import { fetchContactStatusHistoryDefault } from "@/stubs/contactStatusHistory";
 
-interface Props {
+export interface ChatContactStatusProps {
   contact: Contact;
   /** When true, omit the section title (e.g. when used inside an accordion) */
   hideTitle?: boolean;
+  /** Passed to {@link ContactStatusHistoryButton}; defaults to Nuvira API fetch. */
+  loadContactStatusHistory?: ContactStatusHistoryListProps["loadHistory"];
 }
 
-export const ChatContactStatus = ({ contact, hideTitle = false }: Props) => {
+export const ChatContactStatus = ({
+  contact,
+  hideTitle = false,
+  loadContactStatusHistory = fetchContactStatusHistoryDefault
+}: ChatContactStatusProps) => {
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const edit = useCallback(() => {
@@ -94,7 +102,7 @@ export const ChatContactStatus = ({ contact, hideTitle = false }: Props) => {
             <Tooltip title="Edit contact status">
               <ContactStatusChip status={contact.status ?? ""} onClick={edit} />
             </Tooltip>
-            <ContactStatusHistoryButton contact={contact} />
+            <ContactStatusHistoryButton contact={contact} loadHistory={loadContactStatusHistory} />
           </Stack>
         )}
       </Stack>

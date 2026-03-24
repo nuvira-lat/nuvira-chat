@@ -6,7 +6,7 @@ import { Contact, ContactMessage } from "@/types";
 import { useRef, useEffect } from "react";
 import { ChatAiCover } from "./Agent/ChatAiCover";
 
-interface Props {
+export interface ChatMessagesContainerProps {
   agentActive: boolean;
   messages: ContactMessage[];
   contact: Contact;
@@ -14,7 +14,12 @@ interface Props {
   sx?: SxProps<Theme>;
 }
 
-export const ChatMessagesContainer = ({ agentActive, messages, contact, sx }: Props) => {
+export const ChatMessagesContainer = ({
+  agentActive,
+  messages,
+  contact,
+  sx
+}: ChatMessagesContainerProps) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const theme = useTheme();
   const borderColor = theme.palette.divider ?? theme.palette.grey[300] ?? "#e0e0e0";

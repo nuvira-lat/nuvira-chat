@@ -12,14 +12,23 @@ import { Contact } from "@/types";
 import { useState, useCallback } from "react";
 import HistoryIcon from "@mui/icons-material/History";
 import CloseIcon from "@mui/icons-material/Close";
-import { ContactStatusHistoryList } from "./ContactStatusHistoryList";
+import {
+  ContactStatusHistoryList,
+  type ContactStatusHistoryListProps
+} from "./ContactStatusHistoryList";
+import { fetchContactStatusHistoryDefault } from "@/stubs/contactStatusHistory";
 
-interface Props {
+export interface ContactStatusHistoryButtonProps {
   contact: Contact;
   variant?: "icon" | "button";
+  loadHistory?: ContactStatusHistoryListProps["loadHistory"];
 }
 
-export const ContactStatusHistoryButton = ({ contact, variant = "icon" }: Props) => {
+export const ContactStatusHistoryButton = ({
+  contact,
+  variant = "icon",
+  loadHistory = fetchContactStatusHistoryDefault
+}: ContactStatusHistoryButtonProps) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = useCallback(() => {
@@ -56,7 +65,7 @@ export const ContactStatusHistoryButton = ({ contact, variant = "icon" }: Props)
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <ContactStatusHistoryList contactId={contact.id} />
+          <ContactStatusHistoryList contactId={contact.id} loadHistory={loadHistory} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="outlined">

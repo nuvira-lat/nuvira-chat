@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * Full chat shell: CRM sidebar (`ConsolidatedChatActions`), thread header, messages, input.
- * Not exported from the npm package by default; documented here for contributors and
- * Storybook. Supports `sidebarPosition`, collapsible CRM, `chatActionsMaxWidth`, `showAgentToggle`, etc.
+ * Full chat shell: CRM sidebar (`ChatSidebar`), thread header, messages, input.
+ * Supports `sidebarPosition`, collapsible CRM, `chatActionsMaxWidth`, `showAgentToggle`, etc.
+ * Inject `useTimelineStream`, `useIsMobile`, and `uploadMediaFileWithUrls` for non-Storybook apps.
  */
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";
@@ -23,16 +23,19 @@ import cloneDeep from "lodash/cloneDeep";
 import { ChatMessagesContainer } from "./ChatMessagesContainer";
 import { ChatWindowHeader } from "./ChatWindowHeader";
 import { ChatInput } from "./ChatInput";
-import { useTimelineStream } from "@/stubs/useWorkspaceStream";
-import { useIsMobile } from "@/stubs/isMobile";
-import { uploadMediaFileWithUrls } from "@/stubs/mediaUpload";
+import {
+  useTimelineStream as defaultUseTimelineStream,
+  type UseTimelineStreamOptions
+} from "@/stubs/useWorkspaceStream";
+import { useIsMobile as defaultUseIsMobile } from "@/stubs/isMobile";
+import { uploadMediaFileWithUrls as defaultUploadMediaFileWithUrls } from "@/stubs/mediaUpload";
 import { ConsolidatedChatActions } from "./ConsolidatedChatActions";
 import { CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE } from "@/stubs/broadcast";
 
 /** Matches CRM sidebar column min width so the header toggle aligns with the actions panel */
 const CRM_PANEL_MIN_WIDTH = { md: 320 };
 
-interface Props {
+export interface ChatWindowProps {
   messages: ContactMessage[];
   contact: Contact;
   funnels: CustomFunnel[];
@@ -61,6 +64,19 @@ interface Props {
   showAgentToggle?: boolean;
   /** Root layout overrides (e.g. height in split-pane demos) */
   sx?: SxProps<Theme>;
+  /**
+   * Workspace timeline hook; default is a no-op (Storybook). Replace with your SSE/realtime hook.
+   */
+  useTimelineStream?: (options: UseTimelineStreamOptions) => {
+    messages: unknown[];
+    isLoading: boolean;
+  };
+  /** Default `false` (desktop layout). Replace with e.g. MUI `useMediaQuery(theme.breakpoints.down("md"))`. */
+  useIsMobile?: () => boolean;
+  /** Media upload for attachments; default returns empty URLs (Storybook). */
+  uploadMediaFileWithUrls?: typeof defaultUploadMediaFileWithUrls;
+  /** Stream event type for contact updates; must match your backend broadcast. */
+  contactUpdatedBroadcastType?: string;
 }
 
 export const ChatWindow = ({
@@ -80,8 +96,12 @@ export const ChatWindow = ({
   onSidebarOpenChange,
   chatActionsMaxWidth = "200px",
   showAgentToggle = false,
-  sx
-}: Props) => {
+  sx,
+  useTimelineStream: useTimelineStreamProp = defaultUseTimelineStream,
+  useIsMobile: useIsMobileProp = defaultUseIsMobile,
+  uploadMediaFileWithUrls: uploadMediaFileWithUrlsProp = defaultUploadMediaFileWithUrls,
+  contactUpdatedBroadcastType = CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE
+}: ChatWindowProps) => {
   const crmPanelId = useId();
   const [sidebarOpenInternal, setSidebarOpenInternal] = useState(defaultSidebarOpen);
   const isSidebarControlled = sidebarOpenControlled !== undefined;
@@ -101,7 +121,7 @@ export const ChatWindow = ({
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<ContactMessage[]>(initialMessages);
   const [contact, setContact] = useState<Contact>(initialContact);
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobileProp();
 
   const showCrmSidebar = !isMobile && (!sidebarCollapsible || sidebarOpen);
   /** Legacy split uses fixed 80% width; collapsible mode uses flex so the thread grows when CRM is hidden */
@@ -148,7 +168,7 @@ export const ChatWindow = ({
     setMessage(message);
   }, []);
 
-  useTimelineStream({
+  useTimelineStreamProp({
     workspaceId: contact.workspaceId,
     onEvent: (data: unknown) => {
       try {
@@ -156,7 +176,7 @@ export const ChatWindow = ({
 
         // Handle contact updates
         if (
-          eventData.type === CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE &&
+          eventData.type === contactUpdatedBroadcastType &&
           eventData.contact?.id === contact.id
         ) {
           setContact(eventData.contact);
@@ -198,7 +218,7 @@ export const ChatWindow = ({
 
         if (mediaFile) {
           // Upload the media file and get both URLs
-          const uploadResult = await uploadMediaFileWithUrls(
+          const uploadResult = await uploadMediaFileWithUrlsProp(
             mediaFile.file,
             contact.workspaceId ?? ""
           );
@@ -235,7 +255,7 @@ export const ChatWindow = ({
         setLoading(false);
       }
     },
-    [contact.id, contact.workspaceId]
+    [contact.id, contact.workspaceId, uploadMediaFileWithUrlsProp]
   );
 
   const handleKeyDown = useCallback(

@@ -10,7 +10,7 @@ import { Contact } from "@/types";
 import { useCallback } from "react";
 import { ContactBadgeGroup } from "./ContactBadgeGroup";
 
-interface Props {
+export interface ChatWindowHeaderProps {
   agentActive: boolean;
   activateAgent: (nv: boolean) => void;
   showAlert?: boolean;
@@ -39,7 +39,7 @@ export const ChatWindowHeader = ({
   headerEndSlot,
   showAgentToggle = true,
   sx
-}: Props) => {
+}: ChatWindowHeaderProps) => {
   const handleChange = useCallback(
     (_: unknown, checked: boolean) => {
       activateAgent(checked);

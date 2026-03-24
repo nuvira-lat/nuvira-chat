@@ -6,7 +6,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { updateContactData } from "@/stubs/updateContactData";
 import { logger } from "@/stubs/logger";
 
-interface ContactInfoEditorProps {
+export interface ContactInfoEditorProps {
   workspace: Workspace;
   contact: Contact;
   /** "sidebar" = no title, compact; "standalone" = optional title, full layout */

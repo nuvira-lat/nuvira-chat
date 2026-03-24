@@ -16,7 +16,7 @@ import { nvFormatDate } from "@/util/nvFormatDate";
 import { Stack, Avatar, Paper, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact, ContactMessage, MessageType } from "@/types";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import ImageIcon from "@mui/icons-material/Image";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
@@ -35,13 +35,13 @@ import {
 /**
  * Props for the ChatMessage component
  */
-interface Props {
+export interface ChatMessageProps {
   /** Contact information for the message sender/receiver */
   contact: Contact;
   /** The message data including content and metadata */
   message: ContactMessage;
   /** Additional content to render below the message */
-  additional?: React.ReactNode;
+  additional?: ReactNode;
   /** Whether to enable debug logging */
   debug?: boolean;
   /** Optional flag to invert message layout direction */
@@ -70,7 +70,7 @@ export const ChatMessage = ({
   debug = false,
   inverse,
   sx
-}: Props) => {
+}: ChatMessageProps) => {
   const inbound = inverse ? message.inbound === false : message.inbound === true;
   // Use the media URL hook to handle signed URLs for media messages
   const {

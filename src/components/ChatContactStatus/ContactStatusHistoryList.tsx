@@ -12,50 +12,39 @@ import {
 } from "@mui/material";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { ContactStatusHistory, CustomFunnel, CustomStage } from "@/types";
 import { StatusChangeDisplay } from "./StatusChangeDisplay";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import PersonIcon from "@mui/icons-material/Person";
+import {
+  fetchContactStatusHistoryDefault,
+  type ContactStatusHistoryListItem
+} from "@/stubs/contactStatusHistory";
 
-interface Props {
+export type { ContactStatusHistoryListItem };
+
+export interface ContactStatusHistoryListProps {
   contactId: string;
+  /**
+   * Load status history for the contact. Defaults to {@link fetchContactStatusHistoryDefault}
+   * (Nuvira API route); pass your own in host apps or tests.
+   */
+  loadHistory?: (contactId: string) => Promise<ContactStatusHistoryListItem[]>;
 }
 
-type ExtendedContactStatusHistory = ContactStatusHistory & {
-  customStage?: CustomStage | null;
-  previousCustomStage?: CustomStage | null;
-  customFunnel?: CustomFunnel | null;
-  previousCustomFunnel?: CustomFunnel | null;
-  changedBy?: {
-    id: string;
-    name: string | null;
-    email: string;
-  } | null;
-};
-
-const fetchHistory = async (contactId: string): Promise<ExtendedContactStatusHistory[]> => {
-  if (!contactId) return [];
-  try {
-    const response = await fetch(`/api/v1/contact/status/history?contactId=${contactId}`);
-    const data = await response.json();
-    return data.statusHistory ?? [];
-  } catch {
-    // Silently handle error - could be logged to error service in production
-    return [];
-  }
-};
-
-export const ContactStatusHistoryList = ({ contactId }: Props) => {
-  const [history, setHistory] = useState<ExtendedContactStatusHistory[]>([]);
+export const ContactStatusHistoryList = ({
+  contactId,
+  loadHistory = fetchContactStatusHistoryDefault
+}: ContactStatusHistoryListProps) => {
+  const [history, setHistory] = useState<ContactStatusHistoryListItem[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(true);
-    fetchHistory(contactId)
+    loadHistory(contactId)
       .then((history) => {
         setHistory(history);
       })
       .finally(() => setLoading(false));
-  }, [contactId]);
+  }, [contactId, loadHistory]);
 
   return (
     <>

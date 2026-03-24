@@ -4,7 +4,7 @@ import { ContactStatusChip } from "@/stubs/contact/ContactStatusChip";
 import { CustomStageChip } from "@/stubs/contact/CustomStageChip";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
-interface StatusChangeDisplayProps {
+export interface StatusChangeDisplayProps {
   item: ContactStatusHistory & {
     customStage?: CustomStage | null;
     previousCustomStage?: CustomStage | null;

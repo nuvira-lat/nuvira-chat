@@ -1,6 +1,6 @@
 # @nuvira/chat-components
 
-React chat UI primitives for Nuvira: MUI-based theming, message-type renderers (text, image, audio, video, document), and conversation list building blocks (`ChatList`, `ChatListItem`, `ContactBadgeGroup`).
+React chat UI for Nuvira: MUI-based theming, message renderers, conversation list (`ChatList`, `ChatListItem`, `ContactBadgeGroup`), CRM sidebar (`ChatSidebar`), and full thread shell (`ChatWindow`, header, messages, input).
 
 ## Install
 
@@ -50,8 +50,23 @@ export function App() {
 - **Message components:** `TextMessage`, `ImageMessage`, `AudioMessage`, `VideoMessage`, `DocumentMessage`, and their `*Props` types
 - **Conversation list:** `ChatList`, `ChatListItem`, `ChatListProps`, `ChatListItemProps`, `ChatListItemData`
 - **Contact badges:** `ContactBadgeGroup`, `ContactBadgeGroupProps` (status, funnel, and stage chips in one row)
+- **Layout:** `CollapsibleEdgePanel`, `CollapsibleEdgePanelProps`
+- **Agent / thread chrome:** `ChatAgentSwitch`, `ChatAiCover`, `ChatMessage`, `ChatMessagesContainer`, `ChatInput`, `ChatWindowHeader`, `ChatWindow`, and their `*Props` types (`ChatInputMediaFile` for attachments)
+- **AI summary:** `AISummary`, `AISummaryProps`
+- **Funnel & stage:** `FunnelStageSelector`, `FunnelSelector`, `StageSelector`, and their `*Props` types
+- **CRM sidebar (accordion sections):** `ChatSidebar` (canonical name; `ConsolidatedChatActions` is a deprecated alias), plus `ChatContactStatus`, `StatusChangeDisplay`, `ContactStatusHistoryList`, `ContactStatusHistoryButton`, `ContactInfoEditor`, `ChatContactNotes`, and their prop types
+- **Types & constants:** `MessageType`, `Contact`, `ContactMessage`, `ContactNotes`, `Workspace`, `CustomFunnel`, `CustomStage`, `ContactStatusHistory`, `ContactStatus`, `MediaState`, `MediaFile`, `ChatSidebarSectionId`, `ChatSidebarSectionConfig`, `ChatSidebarCustomSection`, `ChatSidebarProps`, and `CHAT_SIDEBAR_*` constants
+- **Integration helpers (defaults you can override):** `fetchContactStatusHistoryDefault`, `ContactStatusHistoryListItem`, `UseTimelineStreamOptions`, `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, `CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`
 
-Other chat shell pieces (e.g. full `ChatWindow`, `CollapsibleEdgePanel`) are implemented in this repo for Storybook and integration; they are not shipped in the npm `exports` until you add them to `src/index.ts`.
+`ChatWindow` accepts optional `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` so host apps replace Storybook/no-op defaults with real SSE, breakpoints, and uploads.
+
+### Stubs and app integration
+
+Several components use **Nuvira-branded stubs** under `src/stubs/` (e.g. `NvAvatar`, `NvTextField`, `LoadingAnimation`, `ContactStatusChip`) for consistent Storybook and internal demos. They ship with the package and are suitable for quick integration; replace them over time with your own primitives via fork or future slot APIs where needed.
+
+**Status history:** `ContactStatusHistoryList` and `ContactStatusHistoryButton` accept an optional `loadHistory` callback; the default calls `fetchContactStatusHistoryDefault` (Nuvira `/api/v1/contact/status/history`). Pass your own loader in non-Nuvira apps.
+
+**Not published:** `ChatWindowSC` (server/prisma demo) remains internal to this repo only.
 
 ### Conversation list and badges
 
@@ -128,7 +143,7 @@ Run `npm run storybook` to see:
 - **Chat list** / **Chat list item** stories
 - **Chat list with ChatWindow** – composite layout (list + `ChatWindow`, collapsible panels, `sidebarPosition`, etc.)
 
-Those demos import components from `@/` paths in this repo; consumers of the published package only use the exports listed in `src/index.ts` unless you re-export more.
+Story demos may import from `@/` paths in this repo; published consumers should import from `@nuvira/chat-components` per the list above (`src/index.ts`).
 
 ## Development
 

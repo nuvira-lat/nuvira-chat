@@ -12,7 +12,7 @@ import { Contact, CustomFunnel, CustomStage } from "@/types";
 import { useCallback, useMemo } from "react";
 import { CustomStageChip } from "@/stubs/contact/CustomStageChip";
 
-interface Props {
+export interface StageSelectorProps {
   contact?: Contact;
   disabled?: boolean;
   selectedFunnel?: CustomFunnel;
@@ -32,7 +32,7 @@ export const StageSelector = ({
   updating,
   setUpdating,
   setSelectedStage
-}: Props) => {
+}: StageSelectorProps) => {
   const handleChange = useCallback(
     async (e: SelectChangeEvent) => {
       const stageId = e.target.value;
