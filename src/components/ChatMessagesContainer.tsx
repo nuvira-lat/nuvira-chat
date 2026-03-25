@@ -66,7 +66,7 @@ export const ChatMessagesContainer = ({
       >
         {messages.map((message, index) => (
           <ChatMessage
-            key={`${message}-${index}`}
+            key={message.id ?? message.messageId ?? `msg-${index}`}
             message={message}
             contact={contact}
             useMediaUrl={components?.useMediaUrl}

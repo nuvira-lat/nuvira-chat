@@ -40,7 +40,7 @@ export const FunnelSelector = ({
   onIntegrationError
 }: FunnelSelectorProps) => {
   const handleChange = useCallback(
-    async (e: SelectChangeEvent) => {
+    async (e: SelectChangeEvent<string>) => {
       const funnelId = e.target.value;
       const funnel: CustomFunnel | undefined = activeFunnels.find((f) => f.id === funnelId);
       if (updating || !funnel || !contact) return;

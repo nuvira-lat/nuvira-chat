@@ -53,7 +53,7 @@ export const ChatContactStatus = ({
         setIsEditingStatus(false);
       } catch (error) {
         onIntegrationError?.(error, "ChatContactStatus.onStatusUpdate");
-        logger.error("Failed to update contact status", "error");
+        logger.error("Failed to update contact status", error);
       } finally {
         setLoading(false);
       }

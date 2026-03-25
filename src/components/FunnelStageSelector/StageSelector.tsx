@@ -40,7 +40,7 @@ export const StageSelector = ({
   onIntegrationError
 }: StageSelectorProps) => {
   const handleChange = useCallback(
-    async (e: SelectChangeEvent) => {
+    async (e: SelectChangeEvent<string>) => {
       const stageId = e.target.value;
       if (updating || !contact) return;
 
@@ -49,7 +49,7 @@ export const StageSelector = ({
         await onStageUpdate({
           contactId: contact.id,
           customStageId: stageId,
-          useCustomStages: stageId !== null,
+          useCustomStages: stageId !== "",
           reason: "Stage updated from chat interface"
         });
 

@@ -5,7 +5,6 @@ import { Contact, CustomFunnel, CustomStage } from "@/types";
 import { useState, useMemo, useEffect } from "react";
 import { FunnelSelector } from "./FunnelSelector";
 import { StageSelector } from "./StageSelector";
-import isNil from "lodash/isNil";
 import { logger } from "@/stubs/logger";
 import { nuviraDefaultLoadStages } from "@/integration/nuviraDefaults";
 import type { ChatIntegrationAdapter } from "@/integration/types";
@@ -42,7 +41,7 @@ export const FunnelStageSelector = ({
   // replaced with another instance for the same id.
   useEffect(() => {
     const selectedId = selectedFunnel?.id;
-    if (isNil(selectedId)) return;
+    if (selectedId == null || selectedId === "") return;
     let cancelled = false;
     loadStages(selectedId)
       .then((list) => {
