@@ -1,8 +1,8 @@
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select, MenuItem, FormControl, InputLabel, type SelectChangeEvent } from "@mui/material";
 
 interface ContactStatusSelectorProps {
   value: string;
-  onChange: (value: unknown) => void | Promise<unknown>;
+  onChange: (value: string) => void | Promise<unknown>;
   disabled?: boolean;
   fullWidth?: boolean;
   label?: string;
@@ -18,7 +18,11 @@ export function ContactStatusSelector({
   return (
     <FormControl size="small" fullWidth={fullWidth} disabled={disabled}>
       <InputLabel>{label}</InputLabel>
-      <Select value={value || ""} label={label} onChange={(e) => onChange(e.target.value)}>
+      <Select
+        value={value || ""}
+        label={label}
+        onChange={(e: SelectChangeEvent<string>) => onChange(e.target.value)}
+      >
         <MenuItem value="LEAD_NEW">Lead New</MenuItem>
         <MenuItem value="LEAD_CONTACTED">Lead Contacted</MenuItem>
         <MenuItem value="QUALIFIED">Qualified</MenuItem>

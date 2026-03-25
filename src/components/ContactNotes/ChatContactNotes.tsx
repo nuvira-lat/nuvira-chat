@@ -1,3 +1,4 @@
+import type { ComponentProps, ComponentType } from "react";
 import { ContactNoteCard } from "@/stubs/ContactNoteCard";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
@@ -17,6 +18,11 @@ export interface ChatContactNotesProps {
   hideTitle?: boolean;
   /** MUI sx prop for the root Box */
   sx?: SxProps<Theme>;
+  components?: {
+    NoteCard?: ComponentType<ComponentProps<typeof ContactNoteCard>>;
+    NoteForm?: ComponentType<ComponentProps<typeof ContactNoteForm>>;
+    Modal?: ComponentType<ComponentProps<typeof NvModal>>;
+  };
 }
 
 export const ChatContactNotes = ({
@@ -24,8 +30,12 @@ export const ChatContactNotes = ({
   notes: _notes,
   workspace,
   hideTitle = false,
-  sx
+  sx,
+  components
 }: ChatContactNotesProps) => {
+  const NoteCardC = components?.NoteCard ?? ContactNoteCard;
+  const NoteFormC = components?.NoteForm ?? ContactNoteForm;
+  const ModalC = components?.Modal ?? NvModal;
   const [notes, setNotes] = useState<ContactNotes[]>(_notes);
   const [selectedNote, setSelectedNote] = useState<ContactNotes | null>(null);
   const [open, setOpen] = useState(false);
@@ -70,7 +80,7 @@ export const ChatContactNotes = ({
                 setOpen(true);
               };
               return (
-                <ContactNoteCard
+                <NoteCardC
                   key={`note-${index}-${note.id}`}
                   note={note}
                   noPadding
@@ -80,13 +90,13 @@ export const ChatContactNotes = ({
             })}
         </Stack>
       </Box>
-      <NvModal
+      <ModalC
         open={open}
         handleClose={handleClose}
         subTitle="Enter the details of your meeting or interaction with this contact."
         title="Add New Meeting Note"
       >
-        <ContactNoteForm
+        <NoteFormC
           workspace={workspace}
           contact={contact}
           note={selectedNote ?? undefined}
@@ -104,7 +114,7 @@ export const ChatContactNotes = ({
             setOpen(false);
           }}
         />
-      </NvModal>
+      </ModalC>
     </>
   );
 };

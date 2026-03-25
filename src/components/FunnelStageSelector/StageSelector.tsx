@@ -11,6 +11,8 @@ import {
 import { Contact, CustomFunnel, CustomStage } from "@/types";
 import { useCallback, useMemo } from "react";
 import { CustomStageChip } from "@/stubs/contact/CustomStageChip";
+import { nuviraDefaultUpdateStage } from "@/integration/nuviraDefaults";
+import type { StageUpdateInput } from "@/integration/types";
 
 export interface StageSelectorProps {
   contact?: Contact;
@@ -21,6 +23,8 @@ export interface StageSelectorProps {
   updating?: boolean;
   setUpdating: (updating: boolean) => void;
   setSelectedStage: (stage: CustomStage | undefined) => void;
+  onStageUpdate?: (input: StageUpdateInput) => Promise<void>;
+  onIntegrationError?: (error: unknown, context: string) => void;
 }
 // TODO: Use New Toast Hook
 export const StageSelector = ({
@@ -31,49 +35,36 @@ export const StageSelector = ({
   stages,
   updating,
   setUpdating,
-  setSelectedStage
+  setSelectedStage,
+  onStageUpdate = nuviraDefaultUpdateStage,
+  onIntegrationError
 }: StageSelectorProps) => {
   const handleChange = useCallback(
-    async (e: SelectChangeEvent) => {
+    async (e: SelectChangeEvent<string>) => {
       const stageId = e.target.value;
       if (updating || !contact) return;
 
       setUpdating(true);
       try {
-        const response = await fetch("/api/v1/contact/custom-stage", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            contactId: contact.id,
-            customStageId: stageId,
-            useCustomStages: stageId !== null,
-            reason: "Stage updated from chat interface"
-          })
+        await onStageUpdate({
+          contactId: contact.id,
+          customStageId: stageId,
+          useCustomStages: stageId !== "",
+          reason: "Stage updated from chat interface"
         });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to update stage");
-        }
 
         const stage = stages.find((s) => s.id === stageId) || undefined;
         setSelectedStage(stage);
       } catch (error) {
         const stage = stages.find((s) => s.id === contact.customStageId) || undefined;
         setSelectedStage(stage);
-        // Revert the selection
+        onIntegrationError?.(error, "StageSelector.onStageUpdate");
         logger.error("Failed to update stage", error);
-        // showToast(
-        //   `Failed to update stage: ${error instanceof Error ? error.message : "Unknown error"}`,
-        //   "error"
-        // );
       } finally {
         setUpdating(false);
       }
     },
-    [contact, setSelectedStage, setUpdating, stages, updating]
+    [contact, setSelectedStage, setUpdating, stages, updating, onStageUpdate, onIntegrationError]
   );
 
   const stagesLoading = useMemo(

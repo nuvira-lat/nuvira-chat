@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import { List, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { ChatListItemData } from "@/types";
-import { ChatListItem } from "./ChatListItem";
+import { ChatListItem, type ChatListItemProps } from "./ChatListItem";
 
 export interface ChatListProps {
   items: ChatListItemData[];
@@ -16,10 +16,19 @@ export interface ChatListProps {
   onSelect?: (id: string) => void;
   emptyState?: ReactNode;
   sx?: SxProps<Theme>;
+  /** Forwarded to every {@link ChatListItem}. */
+  itemComponents?: ChatListItemProps["components"];
 }
 
 /** MUI `List` of conversation rows with optional selection. */
-export function ChatList({ items, selectedId, onSelect, emptyState, sx }: ChatListProps) {
+export function ChatList({
+  items,
+  selectedId,
+  onSelect,
+  emptyState,
+  sx,
+  itemComponents
+}: ChatListProps) {
   if (items.length === 0) {
     return (
       <Stack
@@ -45,6 +54,7 @@ export function ChatList({ items, selectedId, onSelect, emptyState, sx }: ChatLi
           item={item}
           selected={selectedId === item.id}
           onClick={onSelect ? () => onSelect(item.id) : undefined}
+          components={itemComponents}
         />
       ))}
     </List>

@@ -3,8 +3,9 @@ import { Stack, Typography, Box, TextField, Button, CircularProgress } from "@mu
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact, Workspace } from "@/types";
 import SaveIcon from "@mui/icons-material/Save";
-import { updateContactData } from "@/stubs/updateContactData";
 import { logger } from "@/stubs/logger";
+import { nuviraDefaultSaveContact } from "@/integration/nuviraDefaults";
+import type { SaveContactInput } from "@/integration/types";
 
 export interface ContactInfoEditorProps {
   workspace: Workspace;
@@ -13,6 +14,10 @@ export interface ContactInfoEditorProps {
   variant?: "sidebar" | "standalone";
   /** Called after successful save */
   onSave?: (data: { name: string; email: string | null; phone: string | null }) => void;
+  /** Persist contact fields; default uses Nuvira `PUT /api/v1/contact/info`. */
+  saveContact?: (data: SaveContactInput) => Promise<void>;
+  /** Central error reporting (e.g. from {@link ChatIntegrationAdapter}). */
+  onIntegrationError?: (error: unknown, context: string) => void;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
 }
@@ -30,6 +35,8 @@ export const ContactInfoEditor = ({
   workspace,
   variant = "standalone",
   onSave,
+  saveContact = nuviraDefaultSaveContact,
+  onIntegrationError,
   sx
 }: ContactInfoEditorProps) => {
   const [contactFields, setContactFields] = useState({
@@ -67,7 +74,7 @@ export const ContactInfoEditor = ({
       const savedName = nameForSave(contactFields.name);
       const savedEmail = contactFields.email || null;
       const savedPhone = contactFields.phone || null;
-      await updateContactData({
+      await saveContact({
         id,
         name: savedName,
         email: savedEmail,
@@ -88,6 +95,7 @@ export const ContactInfoEditor = ({
         phone: savedPhone
       });
     } catch (error) {
+      onIntegrationError?.(error, "ContactInfoEditor.saveContact");
       logger.error("Failed to save contact:", error);
     } finally {
       setIsSaving(false);
@@ -98,7 +106,9 @@ export const ContactInfoEditor = ({
     contactFields.name,
     contactFields.phone,
     workspace.id,
-    onSave
+    onSave,
+    saveContact,
+    onIntegrationError
   ]);
 
   const handleRevert = useCallback(() => {

@@ -14,8 +14,11 @@ export type ContactStatusHistoryListItem = ContactStatusHistory & {
 };
 
 /**
- * Default loader matching the Nuvira app route. Override by passing `loadHistory` to
- * {@link ContactStatusHistoryList} or {@link ContactStatusHistoryButton}.
+ * Default loader matching the Nuvira app route (same implementation as
+ * `nuviraDefaultLoadContactStatusHistory` in the package public API).
+ *
+ * @deprecated Prefer `nuviraDefaultLoadContactStatusHistory` from `@nuvira/chat-components`
+ *   (same behavior; aligns with `ChatIntegrationAdapter.loadContactStatusHistory`).
  */
 export async function fetchContactStatusHistoryDefault(
   contactId: string

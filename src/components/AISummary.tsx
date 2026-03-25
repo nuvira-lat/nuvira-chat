@@ -2,7 +2,6 @@
  * AI Summary Component
  *
  * Displays AI-generated summary for a contact with generate functionality.
- * This component allows users to generate and view AI summaries for contact interactions.
  */
 
 "use client";
@@ -13,67 +12,78 @@ import { Typography, Button, Tooltip, Stack } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Contact } from "@/types";
 import isNil from "lodash/isNil";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { nuviraDefaultGenerateSummary } from "@/integration/nuviraDefaults";
+import type { ChatIntegrationAdapter } from "@/integration/types";
 
-/**
- * Props for the AISummary component
- */
 export interface AISummaryProps {
-  /** Contact information for generating the summary */
   contact: Contact;
-  /** Whether the component is disabled */
   disabled?: boolean;
-  /** When true, omit the section title (e.g. when used inside an accordion) */
   hideTitle?: boolean;
-  /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
+  /** Generate summary text; default calls Nuvira `POST /api/v1/agents/contact-summary`. */
+  onGenerateSummary?: ChatIntegrationAdapter["onGenerateSummary"];
+  onIntegrationError?: ChatIntegrationAdapter["onIntegrationError"];
+  /** Controlled summary text; omit for internal state synced from `contact.aiNotesSummary`. */
+  summary?: string | null;
+  onSummaryChange?: (value: string | null) => void;
+  /** Replace loading indicator on the generate button. */
+  components?: {
+    Loading?: typeof LoadingAnimation;
+  };
 }
 
-/**
- * AISummary Component
- *
- * Provides AI-powered summary generation for contact interactions.
- * Displays existing summaries and allows generating new ones.
- *
- * @param props - The component props
- * @param props.contact - Contact data containing summary information
- * @param props.disabled - Whether summary generation is disabled
- * @returns JSX element containing the AI summary interface
- */
-export const AISummary = ({ contact, disabled = false, hideTitle = false, sx }: AISummaryProps) => {
+export const AISummary = ({
+  contact,
+  disabled = false,
+  hideTitle = false,
+  sx,
+  onGenerateSummary = nuviraDefaultGenerateSummary,
+  onIntegrationError,
+  summary: summaryControlled,
+  onSummaryChange,
+  components
+}: AISummaryProps) => {
+  const LoadingComp = components?.Loading ?? LoadingAnimation;
+  const [internalSummary, setInternalSummary] = useState<string | null | undefined>(
+    contact.aiNotesSummary
+  );
   const [loading, setLoading] = useState(false);
-  const [summary, setSummary] = useState(contact.aiNotesSummary);
 
-  /**
-   * Requests a new AI summary for the contact
-   */
+  const isControlled = summaryControlled !== undefined;
+  const summary = isControlled ? summaryControlled : internalSummary;
+
+  useEffect(() => {
+    if (!isControlled) {
+      setInternalSummary(contact.aiNotesSummary);
+    }
+  }, [contact.aiNotesSummary, contact.id, isControlled]);
+
+  const setSummary = useCallback(
+    (value: string | null) => {
+      if (isControlled) {
+        onSummaryChange?.(value);
+      } else {
+        setInternalSummary(value);
+      }
+    },
+    [isControlled, onSummaryChange]
+  );
+
   const requestSummary = useCallback(() => {
     setLoading(true);
     void (async () => {
-      const url = "/api/v1/agents/contact-summary";
-      const method = "POST";
       try {
-        const response = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ contactId: contact.id })
-        });
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error);
-        }
-        const responseData = await response.json();
-        const description = responseData.description as string;
+        const description = await onGenerateSummary(contact.id);
         setSummary(description);
-        setLoading(false);
-        return;
       } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        alert(`Error: ${(error as unknown as any).message}`);
+        onIntegrationError?.(error, "AISummary.onGenerateSummary");
+        setSummary(null);
+      } finally {
         setLoading(false);
       }
-    })().then(() => setLoading(false));
-  }, [contact.id]);
+    })();
+  }, [contact.id, onGenerateSummary, onIntegrationError, setSummary]);
 
   return (
     <Stack spacing={2} sx={sx}>
@@ -106,7 +116,7 @@ export const AISummary = ({ contact, disabled = false, hideTitle = false, sx }: 
           variant="contained"
           startIcon={<ReplayIcon />}
           disabled={disabled || loading}
-          endIcon={loading && <LoadingAnimation type="dots" />}
+          endIcon={loading ? <LoadingComp type="dots" /> : undefined}
           onClick={requestSummary}
           fullWidth
         >

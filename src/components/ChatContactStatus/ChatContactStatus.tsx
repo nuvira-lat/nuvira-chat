@@ -6,23 +6,30 @@ import { useCallback, useState } from "react";
 import { ContactStatusChip } from "@/stubs/contact/ContactStatusChip";
 import { ContactStatusSelector } from "@/stubs/contact/ContactStatusSelector";
 import { logger } from "@/stubs/logger";
-import { Contact, ContactStatus } from "@/types";
+import { Contact } from "@/types";
 import { ContactStatusHistoryButton } from "./ContactStatusHistoryButton";
 import type { ContactStatusHistoryListProps } from "./ContactStatusHistoryList";
-import { fetchContactStatusHistoryDefault } from "@/stubs/contactStatusHistory";
+import {
+  nuviraDefaultLoadContactStatusHistory,
+  nuviraDefaultUpdateContactStatus
+} from "@/integration/nuviraDefaults";
+import type { ContactStatusUpdateInput } from "@/integration/types";
 
 export interface ChatContactStatusProps {
   contact: Contact;
-  /** When true, omit the section title (e.g. when used inside an accordion) */
   hideTitle?: boolean;
-  /** Passed to {@link ContactStatusHistoryButton}; defaults to Nuvira API fetch. */
   loadContactStatusHistory?: ContactStatusHistoryListProps["loadHistory"];
+  /** Default: Nuvira `PUT /api/v1/contact/status/update`. */
+  onStatusUpdate?: (input: ContactStatusUpdateInput) => Promise<Contact | void>;
+  onIntegrationError?: (error: unknown, context: string) => void;
 }
 
 export const ChatContactStatus = ({
   contact,
   hideTitle = false,
-  loadContactStatusHistory = fetchContactStatusHistoryDefault
+  loadContactStatusHistory = nuviraDefaultLoadContactStatusHistory,
+  onStatusUpdate = nuviraDefaultUpdateContactStatus,
+  onIntegrationError
 }: ChatContactStatusProps) => {
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,43 +41,24 @@ export const ChatContactStatus = ({
   }, []);
 
   const handleStatusChange = useCallback(
-    async (newStatus: ContactStatus) => {
+    async (newStatus: string) => {
       try {
         setLoading(true);
-        const response = await fetch("/api/v1/contact/status/update", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            contactId: contact.id,
-            newStatus,
-            reason: "Updated status from chat",
-            isAutomatic: false
-          })
+        await onStatusUpdate({
+          contactId: contact.id,
+          newStatus,
+          reason: "Updated status from chat",
+          isAutomatic: false
         });
-
-        if (!response.ok) {
-          throw new Error("Failed to update contact status");
-        }
-
-        const data = await response.json();
-
-        if (data.success) {
-          // TODO: Use New Toast Hook
-          // showToast("Contact status updated successfully", "success");
-          setLoading(false);
-          return data.contact;
-        } else {
-          setLoading(false);
-          throw new Error(data.error || "Failed to update contact status");
-        }
-      } catch {
+        setIsEditingStatus(false);
+      } catch (error) {
+        onIntegrationError?.(error, "ChatContactStatus.onStatusUpdate");
+        logger.error("Failed to update contact status", error);
+      } finally {
         setLoading(false);
-        logger.error("Failed to update contact status", "error");
       }
     },
-    [contact.id]
+    [contact.id, onStatusUpdate, onIntegrationError]
   );
 
   return (
@@ -85,7 +73,7 @@ export const ChatContactStatus = ({
           <>
             <ContactStatusSelector
               value={contact.status ?? ""}
-              onChange={(v) => handleStatusChange(v as ContactStatus)}
+              onChange={(v) => void handleStatusChange(v)}
               disabled={loading}
               fullWidth
               label="Status"

@@ -27,11 +27,14 @@ export default meta;
 
 type Story = StoryObj<typeof ContactInfoEditor>;
 
+const noopSave = async () => {};
+
 export const Default: Story = {
   args: {
     contact: mockContact,
     workspace: mockWorkspace,
-    variant: "standalone"
+    variant: "standalone",
+    saveContact: noopSave
   }
 };
 
@@ -39,7 +42,8 @@ export const Sidebar: Story = {
   args: {
     contact: mockContact,
     workspace: mockWorkspace,
-    variant: "sidebar"
+    variant: "sidebar",
+    saveContact: noopSave
   },
   parameters: {
     docs: {

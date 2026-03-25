@@ -1,5 +1,5 @@
 import { ChatList } from "@/components/ChatList";
-import { Stack, Chip } from "@mui/material";
+import { Stack, Chip, Avatar } from "@mui/material";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { mockChatListItems } from "./fixtures";
@@ -64,5 +64,21 @@ export const SelectedSecond: Story = {
     items: mockChatListItems,
     selectedId: "contact-2",
     onSelect: fn()
+  }
+};
+
+/** Demonstrates `itemComponents.Avatar` (MUI `Avatar` instead of default `NvAvatar`). */
+export const CustomAvatar: Story = {
+  args: {
+    items: mockChatListItems,
+    selectedId: "contact-1",
+    onSelect: fn(),
+    itemComponents: {
+      Avatar: ({ name, src, sx }) => (
+        <Avatar src={src ?? undefined} alt={name} sx={{ width: 40, height: 40, ...sx }}>
+          {name?.[0]?.toUpperCase() ?? "?"}
+        </Avatar>
+      )
+    }
   }
 };

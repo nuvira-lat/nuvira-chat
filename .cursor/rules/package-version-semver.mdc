@@ -1,0 +1,14 @@
+---
+description: Change package.json version patch digit only unless the user explicitly asks for minor/major
+globs: package.json
+alwaysApply: false
+---
+
+# `package.json` version
+
+When updating `"version"` in this project’s `package.json`:
+
+- **Only change the patch segment** (the third number, after the second dot), e.g. `0.4.0` → `0.4.1`.
+- **Do not** bump the major or minor version unless the user **explicitly** asks for a minor or major release.
+
+If a task would normally warrant a minor/major bump, still use a patch-only change here and note in the reply that the user can request a higher semver level if they want.

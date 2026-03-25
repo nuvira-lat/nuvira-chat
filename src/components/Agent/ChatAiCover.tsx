@@ -3,14 +3,18 @@ import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { Stack, Avatar, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
+import type { ComponentType } from "react";
 
-interface Props {
-  /** MUI sx prop for the root Stack */
+export interface ChatAiCoverProps {
   sx?: SxProps<Theme>;
+  components?: {
+    Loading?: ComponentType<{ type?: string; color?: string }>;
+  };
 }
 
-export const ChatAiCover = ({ sx }: Props) => {
+export const ChatAiCover = ({ sx, components }: ChatAiCoverProps) => {
   const theme = useTheme();
+  const LoadingComp = components?.Loading ?? LoadingAnimation;
 
   return (
     <Stack
@@ -37,7 +41,7 @@ export const ChatAiCover = ({ sx }: Props) => {
           color="grey.300"
         >
           Propulso AI talking with client
-          <LoadingAnimation />
+          <LoadingComp />
         </Typography>
       </Stack>
     </Stack>
