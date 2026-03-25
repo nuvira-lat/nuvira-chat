@@ -1,4 +1,6 @@
 import { NvTextField } from "@/stubs/NvTextField";
+import type { TextFieldProps } from "@mui/material";
+import type { ComponentType } from "react";
 import {
   IconButton,
   InputAdornment,
@@ -41,6 +43,9 @@ export interface ChatInputProps {
   sx?: SxProps<Theme>;
   /** Extra TextField input props (merged with internal adornments). Mirrors MUI v6 `slotProps.input` for MUI v5 `InputProps`. */
   slotProps?: { input?: Partial<InputProps> };
+  components?: {
+    TextField?: ComponentType<TextFieldProps>;
+  };
 }
 
 export const ChatInput = ({
@@ -51,8 +56,10 @@ export const ChatInput = ({
   onSubmit,
   onKeyDown,
   sx,
-  slotProps: slotPropsProp
+  slotProps: slotPropsProp,
+  components
 }: ChatInputProps) => {
+  const TextFieldComp = components?.TextField ?? NvTextField;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedMedia, setSelectedMedia] = useState<ChatInputMediaFile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -183,7 +190,7 @@ export const ChatInput = ({
       )}
 
       <Tooltip title={agentActive ? "Deactivate agent to be able to send messages." : ""}>
-        <NvTextField
+        <TextFieldComp
           placeholder="Type a message or attach media..."
           fullWidth
           value={message || ""}

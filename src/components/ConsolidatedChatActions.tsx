@@ -23,6 +23,16 @@ import { AISummary } from "./AISummary";
 import { ChatContactStatus } from "./ChatContactStatus/ChatContactStatus";
 import { ContactInfoEditor } from "./ContactInfoEditor";
 import { ChatContactNotes } from "./ContactNotes/ChatContactNotes";
+import { pickIntegration, mergeOnIntegrationError } from "@/integration/pickIntegration";
+import { fetchContactStatusHistoryDefault } from "@/stubs/contactStatusHistory";
+import {
+  nuviraDefaultSaveContact,
+  nuviraDefaultGenerateSummary,
+  nuviraDefaultUpdateContactStatus,
+  nuviraDefaultLoadStages,
+  nuviraDefaultUpdateFunnel,
+  nuviraDefaultUpdateStage
+} from "@/integration/nuviraDefaults";
 
 const CHAT_SIDEBAR_SECTION_ICONS: Record<ChatSidebarSectionId, ReactNode> = {
   status: <BadgeIcon sx={{ fontSize: 20 }} />,
@@ -36,6 +46,7 @@ const CHAT_SIDEBAR_DEFAULT_CUSTOM_ICON = <WidgetsIcon sx={{ fontSize: 20 }} />;
 
 export const ChatSidebar = ({
   contact,
+  integration,
   sections,
   sectionConfig,
   customSections,
@@ -107,20 +118,77 @@ export const ChatSidebar = ({
       return config.slot;
     }
 
+    const sec = config?.integration;
+
     switch (sectionId) {
       case "status":
-        return <ChatContactStatus contact={contact} hideTitle />;
+        return (
+          <ChatContactStatus
+            contact={contact}
+            hideTitle
+            loadContactStatusHistory={pickIntegration(
+              "loadContactStatusHistory",
+              sec,
+              integration,
+              fetchContactStatusHistoryDefault
+            )}
+            onStatusUpdate={pickIntegration(
+              "onStatusUpdate",
+              sec,
+              integration,
+              nuviraDefaultUpdateContactStatus
+            )}
+            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+          />
+        );
       case "infoEditor":
         return workspace ? (
-          <ContactInfoEditor contact={contact} workspace={workspace} variant="sidebar" />
+          <ContactInfoEditor
+            contact={contact}
+            workspace={workspace}
+            variant="sidebar"
+            saveContact={pickIntegration("saveContact", sec, integration, nuviraDefaultSaveContact)}
+            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+          />
         ) : null;
       case "funnelStage":
         if (!funnels) return null;
         return (
-          <FunnelStageSelector contact={contact} funnels={funnels} disabled={config?.disabled} />
+          <FunnelStageSelector
+            contact={contact}
+            funnels={funnels}
+            disabled={config?.disabled}
+            loadStages={pickIntegration("loadStages", sec, integration, nuviraDefaultLoadStages)}
+            onFunnelUpdate={pickIntegration(
+              "onFunnelUpdate",
+              sec,
+              integration,
+              nuviraDefaultUpdateFunnel
+            )}
+            onStageUpdate={pickIntegration(
+              "onStageUpdate",
+              sec,
+              integration,
+              nuviraDefaultUpdateStage
+            )}
+            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+          />
         );
       case "aiSummary":
-        return <AISummary contact={contact} disabled={config?.disabled} hideTitle />;
+        return (
+          <AISummary
+            contact={contact}
+            disabled={config?.disabled}
+            hideTitle
+            onGenerateSummary={pickIntegration(
+              "onGenerateSummary",
+              sec,
+              integration,
+              nuviraDefaultGenerateSummary
+            )}
+            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+          />
+        );
       case "notes":
         return notes && workspace ? (
           <ChatContactNotes contact={contact} notes={notes} workspace={workspace} hideTitle />

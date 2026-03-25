@@ -5,7 +5,7 @@
  * {@link ContactBadgeGroup}, and optional error hint. Uses `ListItemButton` for
  * selection and keyboard focus.
  */
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import {
   Badge,
   ListItemAvatar,
@@ -18,8 +18,19 @@ import type { SxProps, Theme } from "@mui/material/styles";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { format, isToday, isYesterday } from "date-fns";
 import { NvAvatar } from "@/stubs/NvAvatar";
-import { ContactBadgeGroup } from "@/components/ContactBadgeGroup";
+import {
+  ContactBadgeGroup,
+  type ContactBadgeGroupComponents
+} from "@/components/ContactBadgeGroup";
 import type { ChatListItemData } from "@/types";
+
+/** Props contract for list row avatars (default: {@link NvAvatar}). */
+export interface ChatListAvatarComponentProps {
+  name: string;
+  src?: string | null;
+  alt?: string;
+  sx?: SxProps<Theme>;
+}
 
 function formatListTime(d: Date): string {
   if (isToday(d)) return format(d, "p");
@@ -34,10 +45,22 @@ export interface ChatListItemProps {
   /** Extra chips or icons after the default badge group */
   slotBadges?: ReactNode;
   sx?: SxProps<Theme>;
+  components?: {
+    Avatar?: ComponentType<ChatListAvatarComponentProps>;
+    badgeGroup?: ContactBadgeGroupComponents;
+  };
 }
 
 /** One row in {@link ChatList}. */
-export function ChatListItem({ item, selected, onClick, slotBadges, sx }: ChatListItemProps) {
+export function ChatListItem({
+  item,
+  selected,
+  onClick,
+  slotBadges,
+  sx,
+  components
+}: ChatListItemProps) {
+  const AvatarComp = components?.Avatar ?? NvAvatar;
   const displayName = item.name ?? "Anon.";
   const hasError = item.lastMessageErrored === true || Boolean(item.lastMessageErrorReason);
   const timeLabel = item.updatedAt ? formatListTime(item.updatedAt) : null;
@@ -68,7 +91,7 @@ export function ChatListItem({ item, selected, onClick, slotBadges, sx }: ChatLi
           color="primary"
           invisible={unread <= 0}
         >
-          <NvAvatar name={displayName} src={item.avatarUrl} sx={{ width: 40, height: 40 }} />
+          <AvatarComp name={displayName} src={item.avatarUrl} sx={{ width: 40, height: 40 }} />
         </Badge>
       </ListItemAvatar>
 
@@ -126,7 +149,11 @@ export function ChatListItem({ item, selected, onClick, slotBadges, sx }: ChatLi
                   titleAccess={item.lastMessageErrorReason ?? "Message error"}
                 />
               )}
-              <ContactBadgeGroup contact={badgeContact} slotEnd={slotBadges} />
+              <ContactBadgeGroup
+                contact={badgeContact}
+                slotEnd={slotBadges}
+                components={components?.badgeGroup}
+              />
             </Stack>
           </Stack>
         }

@@ -1,6 +1,6 @@
 {
   "name": "@nuvira/chat-components",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "description": "Chat UI for React: MUI theme, message renderers, conversation list, CRM sidebar, chat shell (ChatWindow), and contact badges",
   "license": "MIT",
   "sideEffects": false,
@@ -41,7 +41,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"*.{js,mjs,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"*.{js,mjs,json}\"",
     "check": "npm run typecheck && npm run lint && npm run format:check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean": "npm run lint:fix && npm run format"
   },
   "peerDependencies": {
     "@emotion/react": ">=11.0.0",

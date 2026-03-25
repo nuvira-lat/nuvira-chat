@@ -56,15 +56,42 @@ export function App() {
 - **Funnel & stage:** `FunnelStageSelector`, `FunnelSelector`, `StageSelector`, and their `*Props` types
 - **CRM sidebar (accordion sections):** `ChatSidebar` (canonical name; `ConsolidatedChatActions` is a deprecated alias), plus `ChatContactStatus`, `StatusChangeDisplay`, `ContactStatusHistoryList`, `ContactStatusHistoryButton`, `ContactInfoEditor`, `ChatContactNotes`, and their prop types
 - **Types & constants:** `MessageType`, `Contact`, `ContactMessage`, `ContactNotes`, `Workspace`, `CustomFunnel`, `CustomStage`, `ContactStatusHistory`, `ContactStatus`, `MediaState`, `MediaFile`, `ChatSidebarSectionId`, `ChatSidebarSectionConfig`, `ChatSidebarCustomSection`, `ChatSidebarProps`, and `CHAT_SIDEBAR_*` constants
-- **Integration helpers (defaults you can override):** `fetchContactStatusHistoryDefault`, `ContactStatusHistoryListItem`, `UseTimelineStreamOptions`, `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, `CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`
+- **Integration (typed callbacks):** `ChatIntegrationAdapter`, `createNuviraChatIntegration`, payload types (`SaveContactInput`, `SendChatMessageInput`, …), and Nuvira default implementations (`nuviraDefaultSaveContact`, `nuviraDefaultSendChatMessage`, …). Helpers `pickIntegration` / `mergeOnIntegrationError` are mainly for advanced composition.
+- **Legacy integration helpers:** `fetchContactStatusHistoryDefault`, `ContactStatusHistoryListItem`, `UseTimelineStreamOptions`, `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, `CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`
 
-`ChatWindow` accepts optional `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` so host apps replace Storybook/no-op defaults with real SSE, breakpoints, and uploads.
+`ChatWindow` accepts optional `integration`, `onSendMessage`, `onUpdateTalkingToAgent`, plus `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` for realtime, layout, and uploads.
+
+### `ChatIntegrationAdapter` and Nuvira defaults
+
+Pass a single **`integration`** object to **`ChatSidebar`** or **`ChatWindow`** to override how the CRM sidebar and thread talk to your backend. **`createNuviraChatIntegration()`** returns an adapter wired to the same Nuvira `fetch` routes the library used internally before (you can still override individual fields).
+
+- **Per-section overrides:** `ChatSidebar` supports `sectionConfig[sectionId].integration` — each field there wins over the root `integration` for that section only.
+- **Per-component props** (e.g. `saveContact` on `ContactInfoEditor`, `onGenerateSummary` on `AISummary`) override both root and section adapter values when set.
+
+Set **`onIntegrationError`** on the adapter (or section override) to receive mutation/load failures in one place instead of relying on `alert` or console-only behavior.
+
+**`ContactInfoEditor`** persists via **`saveContact`** (default: `nuviraDefaultSaveContact` → `PUT /api/v1/contact/info`). Storybook and tests should pass a no-op or mock `saveContact` when the API is unavailable.
+
+### UI `components` maps (stub substitution)
+
+Optional **`components`** props let you swap MUI/stub primitives without forking:
+
+- **`ChatList`:** `itemComponents` → forwarded to each `ChatListItem` (`Avatar`, nested `badgeGroup` chips).
+- **`ChatListItem` / `ChatWindowHeader`:** `components.Avatar` (see `ChatListAvatarComponentProps`), header also `components.Loading`, `components.badgeGroup`.
+- **`ContactBadgeGroup`:** `StatusChip`, `FunnelDisplay`, `StageDisplay` (`ContactBadgeGroupComponents`).
+- **`ChatInput`:** `TextField` (defaults to `NvTextField`).
+- **`ChatMessage`:** `useMediaUrl` hook (same signature as the package default; must follow rules of hooks).
+- **`ChatMessagesContainer`:** `components.AiCover`, `components.useMediaUrl` for child messages.
+- **`ChatAiCover`:** `components.Loading`.
+- **`AISummary`:** `components.Loading` on the generate button.
+- **`StatusChangeDisplay`:** `ContactStatusChip`, `CustomStageChip`.
+- **`ChatContactNotes`:** `NoteCard`, `NoteForm`, `Modal`.
 
 ### Stubs and app integration
 
-Several components use **Nuvira-branded stubs** under `src/stubs/` (e.g. `NvAvatar`, `NvTextField`, `LoadingAnimation`, `ContactStatusChip`) for consistent Storybook and internal demos. They ship with the package and are suitable for quick integration; replace them over time with your own primitives via fork or future slot APIs where needed.
+Several components still default to **Nuvira-branded stubs** under `src/stubs/` when you do not pass `components`. They ship with the package for quick demos.
 
-**Status history:** `ContactStatusHistoryList` and `ContactStatusHistoryButton` accept an optional `loadHistory` callback; the default calls `fetchContactStatusHistoryDefault` (Nuvira `/api/v1/contact/status/history`). Pass your own loader in non-Nuvira apps.
+**Status history:** `ContactStatusHistoryList` / `ContactStatusHistoryButton` accept optional `loadHistory`; default is `fetchContactStatusHistoryDefault`. The same loader is available on `ChatIntegrationAdapter.loadContactStatusHistory`.
 
 **Not published:** `ChatWindowSC` (server/prisma demo) remains internal to this repo only.
 
@@ -92,6 +119,7 @@ Scrollable MUI `List` of `ChatListItem` rows.
 - **`onSelect(id)`** – called when a row is activated
 - **`emptyState`** – custom node when `items` is empty (default copy: “No conversations”)
 - **`sx`** – root styles
+- **`itemComponents`** – optional `components` for each `ChatListItem` (avatar / badge chips)
 
 #### `ChatListItem`
 

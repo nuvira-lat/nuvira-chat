@@ -1,11 +1,13 @@
 import { NvAvatar } from "@/stubs/NvAvatar";
+import type { ChatListAvatarComponentProps } from "@/components/ChatList/ChatListItem";
+import type { ContactBadgeGroupComponents } from "@/components/ContactBadgeGroup";
 import { ChatAgentSwitch } from "./Agent/ChatAgentSwitch";
 import { getColorFromstatus } from "@/stubs/contact/ContactStatusChip";
 import LoadingAnimation from "@/stubs/LoadingAnimation";
 import { Alert, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { Contact } from "@/types";
 import { useCallback } from "react";
 import { ContactBadgeGroup } from "./ContactBadgeGroup";
@@ -26,6 +28,11 @@ export interface ChatWindowHeaderProps {
   showAgentToggle?: boolean;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
+  components?: {
+    Avatar?: ComponentType<ChatListAvatarComponentProps>;
+    Loading?: ComponentType<{ type?: "spinner" | "dots"; color?: string }>;
+    badgeGroup?: ContactBadgeGroupComponents;
+  };
 }
 
 export const ChatWindowHeader = ({
@@ -38,8 +45,11 @@ export const ChatWindowHeader = ({
   headerStartSlot,
   headerEndSlot,
   showAgentToggle = true,
-  sx
+  sx,
+  components
 }: ChatWindowHeaderProps) => {
+  const AvatarComp = components?.Avatar ?? NvAvatar;
+  const LoadingComp = components?.Loading ?? LoadingAnimation;
   const handleChange = useCallback(
     (_: unknown, checked: boolean) => {
       activateAgent(checked);
@@ -66,12 +76,12 @@ export const ChatWindowHeader = ({
       >
         <Stack direction="row" gap={1} alignItems="center" minWidth={0}>
           {headerStartSlot}
-          <NvAvatar name={contact.name ?? "Anon."} src={avatarUrl} />
+          <AvatarComp name={contact.name ?? "Anon."} src={avatarUrl} />
           <Stack>
             <Typography variant="subtitle1" fontWeight="bold">
               {contact?.name ?? "Anon."}
             </Typography>
-            <ContactBadgeGroup contact={contact} />
+            <ContactBadgeGroup contact={contact} components={components?.badgeGroup} />
           </Stack>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1}>
@@ -86,7 +96,7 @@ export const ChatWindowHeader = ({
                 disabled={loading}
                 sx={{ my: "auto" }}
               />
-              {loading && <LoadingAnimation type="spinner" color={theme.palette.primary.main} />}
+              {loading && <LoadingComp type="spinner" color={theme.palette.primary.main} />}
             </>
           )}
           {headerEndSlot}

@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { Contact, CustomFunnel, CustomStage } from "@/types";
 import { useCallback } from "react";
+import { nuviraDefaultUpdateFunnel } from "@/integration/nuviraDefaults";
+import type { FunnelUpdateInput } from "@/integration/types";
 
 export interface FunnelSelectorProps {
   activeFunnels: CustomFunnel[];
@@ -22,6 +24,8 @@ export interface FunnelSelectorProps {
   setUpdating: (updating: boolean) => void;
   updating?: boolean;
   workspaceId?: string;
+  onFunnelUpdate?: (input: FunnelUpdateInput) => Promise<void>;
+  onIntegrationError?: (error: unknown, context: string) => void;
 }
 
 export const FunnelSelector = ({
@@ -32,7 +36,9 @@ export const FunnelSelector = ({
   setSelectedFunnel,
   setSelectedStage,
   setUpdating,
-  updating
+  updating,
+  onFunnelUpdate = nuviraDefaultUpdateFunnel,
+  onIntegrationError
 }: FunnelSelectorProps) => {
   const handleChange = useCallback(
     async (e: SelectChangeEvent) => {
@@ -42,39 +48,33 @@ export const FunnelSelector = ({
 
       setUpdating(true);
       try {
-        const response = await fetch("/api/v1/contact/custom-funnel", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            contactId: contact.id,
-            funnelId: funnelId,
-            reason: "Funnel updated from chat interface"
-          })
+        await onFunnelUpdate({
+          contactId: contact.id,
+          funnelId,
+          reason: "Funnel updated from chat interface"
         });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to update stage");
-        }
 
         setSelectedFunnel(funnel);
         setSelectedStage(undefined); // Reset stage selection when funnel changes
       } catch (error) {
         const stage = activeFunnels.find((s) => s.id === contact.customFunnelId) || undefined;
         setSelectedFunnel(stage);
-        // Revert the selection
+        onIntegrationError?.(error, "FunnelSelector.onFunnelUpdate");
         logger.error("Failed to update stage", error);
-        // showToast(
-        //   `Failed to update stage: ${error instanceof Error ? error.message : "Unknown error"}`,
-        //   "error"
-        // );
       } finally {
         setUpdating(false);
       }
     },
-    [activeFunnels, contact, setSelectedFunnel, setSelectedStage, setUpdating, updating]
+    [
+      activeFunnels,
+      contact,
+      setSelectedFunnel,
+      setSelectedStage,
+      setUpdating,
+      updating,
+      onFunnelUpdate,
+      onIntegrationError
+    ]
   );
 
   return (

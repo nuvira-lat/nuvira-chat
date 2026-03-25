@@ -120,3 +120,34 @@ export { useTimelineStream } from "./stubs/useWorkspaceStream";
 export { useIsMobile } from "./stubs/isMobile";
 export { uploadMediaFileWithUrls } from "./stubs/mediaUpload";
 export { CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE } from "./stubs/broadcast";
+
+export type {
+  ChatIntegrationAdapter,
+  SaveContactInput,
+  UpdateTalkingToAgentInput,
+  SendChatMessageInput,
+  ContactStatusUpdateInput,
+  FunnelUpdateInput,
+  StageUpdateInput,
+  LoadContactStatusHistoryFn
+} from "./integration/types";
+
+export {
+  nuviraDefaultSaveContact,
+  nuviraDefaultGenerateSummary,
+  nuviraDefaultUpdateContactStatus,
+  nuviraDefaultLoadContactStatusHistory,
+  nuviraDefaultLoadStages,
+  nuviraDefaultUpdateFunnel,
+  nuviraDefaultUpdateStage,
+  nuviraDefaultUpdateTalkingToAgent,
+  nuviraDefaultSendChatMessage,
+  createNuviraChatIntegration
+} from "./integration/nuviraDefaults";
+
+export { pickIntegration, mergeOnIntegrationError } from "./integration/pickIntegration";
+
+export type { ChatListAvatarComponentProps } from "./components/ChatList/ChatListItem";
+export type { ContactBadgeGroupComponents } from "./components/ContactBadgeGroup";
+export type { ChatMessageUseMediaUrl } from "./components/ChatMessage";
+export type { ChatAiCoverProps } from "./components/Agent/ChatAiCover";

@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { ContactStatusHistory, CustomFunnel, CustomStage } from "@/types";
 import { ContactStatusChip } from "@/stubs/contact/ContactStatusChip";
@@ -11,9 +12,18 @@ export interface StatusChangeDisplayProps {
     customFunnel?: CustomFunnel | null;
     previousCustomFunnel?: CustomFunnel | null;
   };
+  components?: {
+    ContactStatusChip?: ComponentType<{ status: string; onClick?: () => void }>;
+    CustomStageChip?: ComponentType<{
+      stage: CustomStage | null | undefined;
+      size?: "small" | "medium";
+    }>;
+  };
 }
 
-export const StatusChangeDisplay = ({ item }: StatusChangeDisplayProps) => {
+export const StatusChangeDisplay = ({ item, components }: StatusChangeDisplayProps) => {
+  const StatusChipC = components?.ContactStatusChip ?? ContactStatusChip;
+  const StageChipC = components?.CustomStageChip ?? CustomStageChip;
   // Determine what type of change occurred
   const hasStatusChange = item.previousStatus !== item.newStatus;
   const hasStageChange = item.previousCustomStageId !== item.customStageId;
@@ -26,11 +36,11 @@ export const StatusChangeDisplay = ({ item }: StatusChangeDisplayProps) => {
         <Stack direction="row" alignItems="center" gap={1} mb={1}>
           {item.previousStatus && (
             <>
-              <ContactStatusChip status={item.previousStatus} />
+              <StatusChipC status={item.previousStatus} />
               <TrendingUpIcon fontSize="small" color="action" />
             </>
           )}
-          <ContactStatusChip status={item.newStatus ?? ""} />
+          <StatusChipC status={item.newStatus ?? ""} />
           <Typography variant="caption" color="text.secondary" component="span">
             Status
           </Typography>
@@ -64,11 +74,11 @@ export const StatusChangeDisplay = ({ item }: StatusChangeDisplayProps) => {
         <Stack direction="row" alignItems="center" gap={1} mb={1}>
           {item.previousCustomStage && (
             <>
-              <CustomStageChip stage={item.previousCustomStage} size="small" />
+              <StageChipC stage={item.previousCustomStage} size="small" />
               <TrendingUpIcon fontSize="small" color="action" />
             </>
           )}
-          {item.customStage && <CustomStageChip stage={item.customStage} size="small" />}
+          {item.customStage && <StageChipC stage={item.customStage} size="small" />}
           <Typography variant="caption" color="text.secondary" component="span">
             Stage
           </Typography>
@@ -78,7 +88,7 @@ export const StatusChangeDisplay = ({ item }: StatusChangeDisplayProps) => {
       {/* If no changes detected, show basic status */}
       {!hasStatusChange && !hasStageChange && !hasFunnelChange && (
         <Stack direction="row" alignItems="center" gap={1} mb={1}>
-          <ContactStatusChip status={item.newStatus ?? ""} />
+          <StatusChipC status={item.newStatus ?? ""} />
           <Typography variant="caption" color="text.secondary" component="span">
             Status set
           </Typography>

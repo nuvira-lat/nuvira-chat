@@ -156,6 +156,10 @@ export interface ChatSidebarSectionConfig {
   slot?: ReactNode;
   /** Whether this section is expanded when the sidebar first renders. Default: false */
   defaultExpanded?: boolean;
+  /**
+   * Overrides {@link ChatSidebarProps.integration} for this section only (same callback shapes).
+   */
+  integration?: Partial<import("@/integration/types").ChatIntegrationAdapter>;
 }
 
 export interface ChatSidebarCustomSection {
@@ -198,6 +202,11 @@ export type ChatListItemData = Pick<
 
 export interface ChatSidebarProps {
   contact: Contact;
+  /**
+   * Shared callbacks/loaders for built-in CRM sections. Per-section overrides in
+   * {@link ChatSidebarSectionConfig.integration} win over these values.
+   */
+  integration?: import("@/integration/types").ChatIntegrationAdapter;
   /** Sections to show, in order. Omit = show all in default order. */
   sections?: ChatSidebarSectionId[];
   /** Per-section overrides */

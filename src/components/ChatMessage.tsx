@@ -22,7 +22,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
 import VideoFileIcon from "@mui/icons-material/VideoFile";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { useMediaUrl } from "@/stubs/useMediaUrl";
+import { useMediaUrl as defaultUseMediaUrl } from "@/stubs/useMediaUrl";
 import { logger } from "@/stubs/logger";
 import {
   TextMessage,
@@ -35,6 +35,9 @@ import {
 /**
  * Props for the ChatMessage component
  */
+/** Hook signature for resolving `mediaUrl` (default: pass-through / signed-URL stub). */
+export type ChatMessageUseMediaUrl = typeof defaultUseMediaUrl;
+
 export interface ChatMessageProps {
   /** Contact information for the message sender/receiver */
   contact: Contact;
@@ -48,6 +51,8 @@ export interface ChatMessageProps {
   inverse?: boolean;
   /** MUI sx prop for the root Stack */
   sx?: SxProps<Theme>;
+  /** Replace default media URL resolution hook (must follow rules of hooks). */
+  useMediaUrl?: ChatMessageUseMediaUrl;
 }
 
 /**
@@ -69,7 +74,8 @@ export const ChatMessage = ({
   additional,
   debug = false,
   inverse,
-  sx
+  sx,
+  useMediaUrl: useMediaUrlHook = defaultUseMediaUrl
 }: ChatMessageProps) => {
   const inbound = inverse ? message.inbound === false : message.inbound === true;
   // Use the media URL hook to handle signed URLs for media messages
@@ -78,7 +84,7 @@ export const ChatMessage = ({
     loading: mediaLoading,
     error: mediaError,
     retry: retryMedia
-  } = useMediaUrl(message.mediaUrl);
+  } = useMediaUrlHook(message.mediaUrl);
 
   // Debug logging for troubleshooting media URL processing
   if (debug)

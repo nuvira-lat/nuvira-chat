@@ -31,6 +31,11 @@ import { useIsMobile as defaultUseIsMobile } from "@/stubs/isMobile";
 import { uploadMediaFileWithUrls as defaultUploadMediaFileWithUrls } from "@/stubs/mediaUpload";
 import { ConsolidatedChatActions } from "./ConsolidatedChatActions";
 import { CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE } from "@/stubs/broadcast";
+import type { ChatIntegrationAdapter } from "@/integration/types";
+import {
+  nuviraDefaultSendChatMessage,
+  nuviraDefaultUpdateTalkingToAgent
+} from "@/integration/nuviraDefaults";
 
 /** Matches CRM sidebar column min width so the header toggle aligns with the actions panel */
 const CRM_PANEL_MIN_WIDTH = { md: 320 };
@@ -77,6 +82,12 @@ export interface ChatWindowProps {
   uploadMediaFileWithUrls?: typeof defaultUploadMediaFileWithUrls;
   /** Stream event type for contact updates; must match your backend broadcast. */
   contactUpdatedBroadcastType?: string;
+  /** Shared CRM / mutation callbacks for {@link ConsolidatedChatActions}. */
+  integration?: ChatIntegrationAdapter;
+  /** Override {@link ChatIntegrationAdapter.onSendMessage} for this window only. */
+  onSendMessage?: ChatIntegrationAdapter["onSendMessage"];
+  /** Override {@link ChatIntegrationAdapter.onUpdateTalkingToAgent} for this window only. */
+  onUpdateTalkingToAgent?: ChatIntegrationAdapter["onUpdateTalkingToAgent"];
 }
 
 export const ChatWindow = ({
@@ -100,8 +111,17 @@ export const ChatWindow = ({
   useTimelineStream: useTimelineStreamProp = defaultUseTimelineStream,
   useIsMobile: useIsMobileProp = defaultUseIsMobile,
   uploadMediaFileWithUrls: uploadMediaFileWithUrlsProp = defaultUploadMediaFileWithUrls,
-  contactUpdatedBroadcastType = CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE
+  contactUpdatedBroadcastType = CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE,
+  integration,
+  onSendMessage: onSendMessageProp,
+  onUpdateTalkingToAgent: onUpdateTalkingToAgentProp
 }: ChatWindowProps) => {
+  const sendMessage =
+    onSendMessageProp ?? integration?.onSendMessage ?? nuviraDefaultSendChatMessage;
+  const updateTalkingToAgent =
+    onUpdateTalkingToAgentProp ??
+    integration?.onUpdateTalkingToAgent ??
+    nuviraDefaultUpdateTalkingToAgent;
   const crmPanelId = useId();
   const [sidebarOpenInternal, setSidebarOpenInternal] = useState(defaultSidebarOpen);
   const isSidebarControlled = sidebarOpenControlled !== undefined;
@@ -129,39 +149,27 @@ export const ChatWindow = ({
 
   const handleTalkingToAgent = useCallback(
     (nv: boolean) => {
-      const asyncUpdate = async (nv: boolean) => {
+      const run = async () => {
         try {
-          const response = await fetch("/api/v1/contact/update-taling-to-agent", {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              talkingToAgent: nv,
-              workspaceId: contact.workspaceId,
-              id: contact.id
-            })
+          const result = await updateTalkingToAgent({
+            contactId: contact.id,
+            workspaceId: contact.workspaceId,
+            talkingToAgent: nv
           });
-
-          if (!response.ok) {
-            console.error("Failed to update talkingToAgent state:", await response.json());
-            return;
-          }
-
-          const data = await response.json();
-          if (data.success) {
+          if (result !== false) {
             steAgentActive(nv);
           }
         } catch (error) {
+          integration?.onIntegrationError?.(error, "ChatWindow.onUpdateTalkingToAgent");
           console.error("Error while updating talkingToAgent state:", error);
         }
       };
       setLoading(true);
-      void asyncUpdate(nv).then(() => {
+      void run().finally(() => {
         setLoading(false);
       });
     },
-    [contact.id, contact.workspaceId]
+    [contact.id, contact.workspaceId, updateTalkingToAgent, integration]
   );
 
   const handleChange = useCallback((message: string) => {
@@ -228,34 +236,24 @@ export const ChatWindow = ({
           fileName = mediaFile.file.name;
         }
 
-        const response = await fetch("/api/v1/meta/whatsapp/send", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: message || null,
-            contactId: contact.id,
-            messageType,
-            mediaUrl,
-            mediaType,
-            fileName
-          })
+        await sendMessage({
+          message: message || null,
+          contactId: contact.id,
+          messageType,
+          mediaUrl,
+          mediaType,
+          fileName
         });
-
-        if (!response.ok) {
-          console.error("Failed to send message:", await response.json());
-          return;
-        }
 
         setMessage("");
       } catch (error) {
+        integration?.onIntegrationError?.(error, "ChatWindow.onSendMessage");
         console.error("Error while sending message:", error);
       } finally {
         setLoading(false);
       }
     },
-    [contact.id, contact.workspaceId, uploadMediaFileWithUrlsProp]
+    [contact.id, contact.workspaceId, uploadMediaFileWithUrlsProp, sendMessage, integration]
   );
 
   const handleKeyDown = useCallback(
@@ -283,6 +281,7 @@ export const ChatWindow = ({
     >
       <ConsolidatedChatActions
         contact={contact}
+        integration={integration}
         notes={notes}
         workspace={workspace}
         funnels={funnels}
