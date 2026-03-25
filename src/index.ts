@@ -110,10 +110,11 @@ export type {
   ChatSidebarProps
 } from "./types";
 
-export {
-  fetchContactStatusHistoryDefault,
-  type ContactStatusHistoryListItem
-} from "./stubs/contactStatusHistory";
+/**
+ * @deprecated Use `nuviraDefaultLoadContactStatusHistory` (same implementation).
+ */
+export { fetchContactStatusHistoryDefault } from "./stubs/contactStatusHistory";
+export type { ContactStatusHistoryListItem } from "./stubs/contactStatusHistory";
 
 export type { UseTimelineStreamOptions } from "./stubs/useWorkspaceStream";
 export { useTimelineStream } from "./stubs/useWorkspaceStream";
@@ -145,7 +146,11 @@ export {
   createNuviraChatIntegration
 } from "./integration/nuviraDefaults";
 
-export { pickIntegration, mergeOnIntegrationError } from "./integration/pickIntegration";
+export {
+  pickIntegration,
+  pickOnIntegrationError,
+  mergeOnIntegrationError
+} from "./integration/pickIntegration";
 
 export type { ChatListAvatarComponentProps } from "./components/ChatList/ChatListItem";
 export type { ContactBadgeGroupComponents } from "./components/ContactBadgeGroup";

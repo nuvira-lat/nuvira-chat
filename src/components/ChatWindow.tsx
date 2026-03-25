@@ -4,6 +4,12 @@
  * Full chat shell: CRM sidebar (`ChatSidebar`), thread header, messages, input.
  * Supports `sidebarPosition`, collapsible CRM, `chatActionsMaxWidth`, `showAgentToggle`, etc.
  * Inject `useTimelineStream`, `useIsMobile`, and `uploadMediaFileWithUrls` for non-Storybook apps.
+ *
+ * **Thread vs CRM integration:** `onSendMessage` and `onUpdateTalkingToAgent` are resolved on this
+ * component as window props, then `integration`, then Nuvira defaults (header / thread). The same
+ * `integration` object is passed into the CRM sidebar (`ConsolidatedChatActions`); those two fields
+ * are only used there if you also set them on `ChatIntegrationAdapter` — they are not injected
+ * separately into the sidebar.
  */
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";

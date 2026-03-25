@@ -8,24 +8,22 @@ import { StageSelector } from "./StageSelector";
 import isNil from "lodash/isNil";
 import { logger } from "@/stubs/logger";
 import { nuviraDefaultLoadStages } from "@/integration/nuviraDefaults";
-import type { FunnelUpdateInput, StageUpdateInput } from "@/integration/types";
+import type { ChatIntegrationAdapter } from "@/integration/types";
 
 export interface FunnelStageSelectorProps {
   contact: Contact;
   disabled?: boolean;
   funnels: CustomFunnel[];
-  workspaceId?: string;
-  loadStages?: (funnelId: string) => Promise<CustomStage[]>;
-  onFunnelUpdate?: (input: FunnelUpdateInput) => Promise<void>;
-  onStageUpdate?: (input: StageUpdateInput) => Promise<void>;
-  onIntegrationError?: (error: unknown, context: string) => void;
+  loadStages?: ChatIntegrationAdapter["loadStages"];
+  onFunnelUpdate?: ChatIntegrationAdapter["onFunnelUpdate"];
+  onStageUpdate?: ChatIntegrationAdapter["onStageUpdate"];
+  onIntegrationError?: ChatIntegrationAdapter["onIntegrationError"];
 }
 
 export const FunnelStageSelector = ({
   contact,
   disabled,
   funnels,
-  workspaceId,
   loadStages = nuviraDefaultLoadStages,
   onFunnelUpdate,
   onStageUpdate,
@@ -40,6 +38,8 @@ export const FunnelStageSelector = ({
   const [selectedStage, setSelectedStage] = useState<CustomStage | undefined>(undefined);
   const [updating, setUpdating] = useState(false);
 
+  // Depend on `selectedFunnel?.id` (not the object) so we do not refetch when the funnel row is
+  // replaced with another instance for the same id.
   useEffect(() => {
     const selectedId = selectedFunnel?.id;
     if (isNil(selectedId)) return;
@@ -65,7 +65,7 @@ export const FunnelStageSelector = ({
     return () => {
       cancelled = true;
     };
-  }, [contact.customStageId, selectedFunnel, loadStages, onIntegrationError]);
+  }, [contact.customStageId, selectedFunnel?.id, loadStages, onIntegrationError]);
 
   const activeFunnels = funnels.filter((f) => f.isActive);
 
@@ -86,7 +86,6 @@ export const FunnelStageSelector = ({
         setSelectedFunnel={setSelectedFunnel}
         setSelectedStage={setSelectedStage}
         updating={updating}
-        workspaceId={workspaceId}
         contact={contact}
         setUpdating={setUpdating}
         onFunnelUpdate={onFunnelUpdate}

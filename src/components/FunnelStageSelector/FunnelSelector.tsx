@@ -23,7 +23,6 @@ export interface FunnelSelectorProps {
   setSelectedStage: (stageId: CustomStage | undefined) => void;
   setUpdating: (updating: boolean) => void;
   updating?: boolean;
-  workspaceId?: string;
   onFunnelUpdate?: (input: FunnelUpdateInput) => Promise<void>;
   onIntegrationError?: (error: unknown, context: string) => void;
 }
@@ -57,10 +56,11 @@ export const FunnelSelector = ({
         setSelectedFunnel(funnel);
         setSelectedStage(undefined); // Reset stage selection when funnel changes
       } catch (error) {
-        const stage = activeFunnels.find((s) => s.id === contact.customFunnelId) || undefined;
-        setSelectedFunnel(stage);
+        const revertFunnel =
+          activeFunnels.find((f) => f.id === contact.customFunnelId) || undefined;
+        setSelectedFunnel(revertFunnel);
         onIntegrationError?.(error, "FunnelSelector.onFunnelUpdate");
-        logger.error("Failed to update stage", error);
+        logger.error("Failed to update funnel", error);
       } finally {
         setUpdating(false);
       }

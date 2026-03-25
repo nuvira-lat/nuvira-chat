@@ -6,11 +6,13 @@ import { useCallback, useState } from "react";
 import { ContactStatusChip } from "@/stubs/contact/ContactStatusChip";
 import { ContactStatusSelector } from "@/stubs/contact/ContactStatusSelector";
 import { logger } from "@/stubs/logger";
-import { Contact, ContactStatus } from "@/types";
+import { Contact } from "@/types";
 import { ContactStatusHistoryButton } from "./ContactStatusHistoryButton";
 import type { ContactStatusHistoryListProps } from "./ContactStatusHistoryList";
-import { fetchContactStatusHistoryDefault } from "@/stubs/contactStatusHistory";
-import { nuviraDefaultUpdateContactStatus } from "@/integration/nuviraDefaults";
+import {
+  nuviraDefaultLoadContactStatusHistory,
+  nuviraDefaultUpdateContactStatus
+} from "@/integration/nuviraDefaults";
 import type { ContactStatusUpdateInput } from "@/integration/types";
 
 export interface ChatContactStatusProps {
@@ -25,7 +27,7 @@ export interface ChatContactStatusProps {
 export const ChatContactStatus = ({
   contact,
   hideTitle = false,
-  loadContactStatusHistory = fetchContactStatusHistoryDefault,
+  loadContactStatusHistory = nuviraDefaultLoadContactStatusHistory,
   onStatusUpdate = nuviraDefaultUpdateContactStatus,
   onIntegrationError
 }: ChatContactStatusProps) => {
@@ -39,7 +41,7 @@ export const ChatContactStatus = ({
   }, []);
 
   const handleStatusChange = useCallback(
-    async (newStatus: ContactStatus) => {
+    async (newStatus: string) => {
       try {
         setLoading(true);
         await onStatusUpdate({
@@ -71,7 +73,7 @@ export const ChatContactStatus = ({
           <>
             <ContactStatusSelector
               value={contact.status ?? ""}
-              onChange={(v) => handleStatusChange(v as ContactStatus)}
+              onChange={(v) => void handleStatusChange(v)}
               disabled={loading}
               fullWidth
               label="Status"

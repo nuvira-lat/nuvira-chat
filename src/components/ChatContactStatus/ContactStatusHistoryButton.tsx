@@ -16,7 +16,7 @@ import {
   ContactStatusHistoryList,
   type ContactStatusHistoryListProps
 } from "./ContactStatusHistoryList";
-import { fetchContactStatusHistoryDefault } from "@/stubs/contactStatusHistory";
+import { nuviraDefaultLoadContactStatusHistory } from "@/integration/nuviraDefaults";
 
 export interface ContactStatusHistoryButtonProps {
   contact: Contact;
@@ -27,7 +27,7 @@ export interface ContactStatusHistoryButtonProps {
 export const ContactStatusHistoryButton = ({
   contact,
   variant = "icon",
-  loadHistory = fetchContactStatusHistoryDefault
+  loadHistory = nuviraDefaultLoadContactStatusHistory
 }: ContactStatusHistoryButtonProps) => {
   const [open, setOpen] = useState(false);
 

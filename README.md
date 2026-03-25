@@ -56,10 +56,12 @@ export function App() {
 - **Funnel & stage:** `FunnelStageSelector`, `FunnelSelector`, `StageSelector`, and their `*Props` types
 - **CRM sidebar (accordion sections):** `ChatSidebar` (canonical name; `ConsolidatedChatActions` is a deprecated alias), plus `ChatContactStatus`, `StatusChangeDisplay`, `ContactStatusHistoryList`, `ContactStatusHistoryButton`, `ContactInfoEditor`, `ChatContactNotes`, and their prop types
 - **Types & constants:** `MessageType`, `Contact`, `ContactMessage`, `ContactNotes`, `Workspace`, `CustomFunnel`, `CustomStage`, `ContactStatusHistory`, `ContactStatus`, `MediaState`, `MediaFile`, `ChatSidebarSectionId`, `ChatSidebarSectionConfig`, `ChatSidebarCustomSection`, `ChatSidebarProps`, and `CHAT_SIDEBAR_*` constants
-- **Integration (typed callbacks):** `ChatIntegrationAdapter`, `createNuviraChatIntegration`, payload types (`SaveContactInput`, `SendChatMessageInput`, …), and Nuvira default implementations (`nuviraDefaultSaveContact`, `nuviraDefaultSendChatMessage`, …). Helpers `pickIntegration` / `mergeOnIntegrationError` are mainly for advanced composition.
-- **Legacy integration helpers:** `fetchContactStatusHistoryDefault`, `ContactStatusHistoryListItem`, `UseTimelineStreamOptions`, `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, `CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`
+- **Integration (typed callbacks):** `ChatIntegrationAdapter`, `createNuviraChatIntegration`, payload types (`SaveContactInput`, `SendChatMessageInput`, …), and Nuvira default implementations (`nuviraDefaultSaveContact`, `nuviraDefaultSendChatMessage`, …). Helpers `pickIntegration` and `pickOnIntegrationError` are mainly for advanced composition. `mergeOnIntegrationError` remains as a deprecated alias for `pickOnIntegrationError` (it picks section-over-root; it does not merge handlers).
+- **Legacy integration helpers:** `ContactStatusHistoryListItem`, `UseTimelineStreamOptions`, `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, `CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`. `fetchContactStatusHistoryDefault` is deprecated; use `nuviraDefaultLoadContactStatusHistory` instead (same implementation).
 
 `ChatWindow` accepts optional `integration`, `onSendMessage`, `onUpdateTalkingToAgent`, plus `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` for realtime, layout, and uploads.
+
+**Thread vs CRM:** On `ChatWindow`, `onSendMessage` and `onUpdateTalkingToAgent` are resolved in order: **window prop → `integration` → Nuvira default**. That resolution applies to the **thread/header** (messages, agent toggle). The **CRM sidebar** receives the same `integration` for mutations and loaders (`saveContact`, `onGenerateSummary`, funnel/stage, status history, etc.). The sidebar does **not** get separate `onSendMessage` / `onUpdateTalkingToAgent` props; include those on `ChatIntegrationAdapter` only if a sidebar-related code path should call them.
 
 ### `ChatIntegrationAdapter` and Nuvira defaults
 
@@ -91,7 +93,7 @@ Optional **`components`** props let you swap MUI/stub primitives without forking
 
 Several components still default to **Nuvira-branded stubs** under `src/stubs/` when you do not pass `components`. They ship with the package for quick demos.
 
-**Status history:** `ContactStatusHistoryList` / `ContactStatusHistoryButton` accept optional `loadHistory`; default is `fetchContactStatusHistoryDefault`. The same loader is available on `ChatIntegrationAdapter.loadContactStatusHistory`.
+**Status history:** `ContactStatusHistoryList` / `ContactStatusHistoryButton` accept optional `loadHistory`; default is `nuviraDefaultLoadContactStatusHistory`. The same loader is `ChatIntegrationAdapter.loadContactStatusHistory`. (`fetchContactStatusHistoryDefault` is deprecated but still exported.)
 
 **Not published:** `ChatWindowSC` (server/prisma demo) remains internal to this repo only.
 

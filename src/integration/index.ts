@@ -9,7 +9,11 @@ export type {
   LoadContactStatusHistoryFn
 } from "./types";
 
-export { pickIntegration, mergeOnIntegrationError } from "./pickIntegration";
+export {
+  pickIntegration,
+  pickOnIntegrationError,
+  mergeOnIntegrationError
+} from "./pickIntegration";
 
 export {
   nuviraDefaultSaveContact,

@@ -23,12 +23,12 @@ import { AISummary } from "./AISummary";
 import { ChatContactStatus } from "./ChatContactStatus/ChatContactStatus";
 import { ContactInfoEditor } from "./ContactInfoEditor";
 import { ChatContactNotes } from "./ContactNotes/ChatContactNotes";
-import { pickIntegration, mergeOnIntegrationError } from "@/integration/pickIntegration";
-import { fetchContactStatusHistoryDefault } from "@/stubs/contactStatusHistory";
+import { pickIntegration, pickOnIntegrationError } from "@/integration/pickIntegration";
 import {
   nuviraDefaultSaveContact,
   nuviraDefaultGenerateSummary,
   nuviraDefaultUpdateContactStatus,
+  nuviraDefaultLoadContactStatusHistory,
   nuviraDefaultLoadStages,
   nuviraDefaultUpdateFunnel,
   nuviraDefaultUpdateStage
@@ -130,7 +130,7 @@ export const ChatSidebar = ({
               "loadContactStatusHistory",
               sec,
               integration,
-              fetchContactStatusHistoryDefault
+              nuviraDefaultLoadContactStatusHistory
             )}
             onStatusUpdate={pickIntegration(
               "onStatusUpdate",
@@ -138,7 +138,7 @@ export const ChatSidebar = ({
               integration,
               nuviraDefaultUpdateContactStatus
             )}
-            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+            onIntegrationError={pickOnIntegrationError(sec, integration)}
           />
         );
       case "infoEditor":
@@ -148,7 +148,7 @@ export const ChatSidebar = ({
             workspace={workspace}
             variant="sidebar"
             saveContact={pickIntegration("saveContact", sec, integration, nuviraDefaultSaveContact)}
-            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+            onIntegrationError={pickOnIntegrationError(sec, integration)}
           />
         ) : null;
       case "funnelStage":
@@ -171,7 +171,7 @@ export const ChatSidebar = ({
               integration,
               nuviraDefaultUpdateStage
             )}
-            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+            onIntegrationError={pickOnIntegrationError(sec, integration)}
           />
         );
       case "aiSummary":
@@ -186,7 +186,7 @@ export const ChatSidebar = ({
               integration,
               nuviraDefaultGenerateSummary
             )}
-            onIntegrationError={mergeOnIntegrationError(sec, integration)}
+            onIntegrationError={pickOnIntegrationError(sec, integration)}
           />
         );
       case "notes":

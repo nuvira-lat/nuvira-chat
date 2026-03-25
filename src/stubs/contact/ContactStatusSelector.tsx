@@ -2,7 +2,7 @@ import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 interface ContactStatusSelectorProps {
   value: string;
-  onChange: (value: unknown) => void | Promise<unknown>;
+  onChange: (value: string) => void | Promise<unknown>;
   disabled?: boolean;
   fullWidth?: boolean;
   label?: string;

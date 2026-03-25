@@ -14,6 +14,7 @@ import { Contact } from "@/types";
 import isNil from "lodash/isNil";
 import { useCallback, useEffect, useState } from "react";
 import { nuviraDefaultGenerateSummary } from "@/integration/nuviraDefaults";
+import type { ChatIntegrationAdapter } from "@/integration/types";
 
 export interface AISummaryProps {
   contact: Contact;
@@ -21,8 +22,8 @@ export interface AISummaryProps {
   hideTitle?: boolean;
   sx?: SxProps<Theme>;
   /** Generate summary text; default calls Nuvira `POST /api/v1/agents/contact-summary`. */
-  onGenerateSummary?: (contactId: string) => Promise<string>;
-  onIntegrationError?: (error: unknown, context: string) => void;
+  onGenerateSummary?: ChatIntegrationAdapter["onGenerateSummary"];
+  onIntegrationError?: ChatIntegrationAdapter["onIntegrationError"];
   /** Controlled summary text; omit for internal state synced from `contact.aiNotesSummary`. */
   summary?: string | null;
   onSummaryChange?: (value: string | null) => void;

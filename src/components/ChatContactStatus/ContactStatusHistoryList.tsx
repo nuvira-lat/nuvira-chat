@@ -15,25 +15,24 @@ import { useEffect, useState } from "react";
 import { StatusChangeDisplay } from "./StatusChangeDisplay";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import PersonIcon from "@mui/icons-material/Person";
-import {
-  fetchContactStatusHistoryDefault,
-  type ContactStatusHistoryListItem
-} from "@/stubs/contactStatusHistory";
+import { type ContactStatusHistoryListItem } from "@/stubs/contactStatusHistory";
+import type { LoadContactStatusHistoryFn } from "@/integration/types";
+import { nuviraDefaultLoadContactStatusHistory } from "@/integration/nuviraDefaults";
 
 export type { ContactStatusHistoryListItem };
 
 export interface ContactStatusHistoryListProps {
   contactId: string;
   /**
-   * Load status history for the contact. Defaults to {@link fetchContactStatusHistoryDefault}
+   * Load status history for the contact. Defaults to `nuviraDefaultLoadContactStatusHistory`
    * (Nuvira API route); pass your own in host apps or tests.
    */
-  loadHistory?: (contactId: string) => Promise<ContactStatusHistoryListItem[]>;
+  loadHistory?: LoadContactStatusHistoryFn;
 }
 
 export const ContactStatusHistoryList = ({
   contactId,
-  loadHistory = fetchContactStatusHistoryDefault
+  loadHistory = nuviraDefaultLoadContactStatusHistory
 }: ContactStatusHistoryListProps) => {
   const [history, setHistory] = useState<ContactStatusHistoryListItem[]>([]);
   const [loading, setLoading] = useState(true);

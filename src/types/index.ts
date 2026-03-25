@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { ChatIntegrationAdapter } from "@/integration/types";
 
 export enum MessageType {
   TEXT = "TEXT",
@@ -159,7 +160,7 @@ export interface ChatSidebarSectionConfig {
   /**
    * Overrides {@link ChatSidebarProps.integration} for this section only (same callback shapes).
    */
-  integration?: Partial<import("@/integration/types").ChatIntegrationAdapter>;
+  integration?: Partial<ChatIntegrationAdapter>;
 }
 
 export interface ChatSidebarCustomSection {
@@ -206,7 +207,7 @@ export interface ChatSidebarProps {
    * Shared callbacks/loaders for built-in CRM sections. Per-section overrides in
    * {@link ChatSidebarSectionConfig.integration} win over these values.
    */
-  integration?: import("@/integration/types").ChatIntegrationAdapter;
+  integration?: ChatIntegrationAdapter;
   /** Sections to show, in order. Omit = show all in default order. */
   sections?: ChatSidebarSectionId[];
   /** Per-section overrides */
