@@ -51,7 +51,8 @@ export function App() {
 - **Conversation list:** `ChatList`, `ChatListItem`, `ChatListProps`, `ChatListItemProps`, `ChatListItemData`
 - **Contact badges:** `ContactBadgeGroup`, `ContactBadgeGroupProps` (status, funnel, and stage chips in one row)
 - **Layout:** `CollapsibleEdgePanel`, `CollapsibleEdgePanelProps`
-- **Agent / thread chrome:** `ChatAgentSwitch`, `ChatAiCover`, `ChatMessage`, `ChatMessagesContainer`, `ChatInput`, `ChatWindowHeader`, `ChatWindow`, and their `*Props` types (`ChatInputMediaFile` for attachments)
+- **Agent / thread chrome:** `ChatAgentSwitch`, `ChatAiCover`, `ChatMessage`, `ChatMessagesContainer`, `ChatInput`, `ChatWindowHeader`, `ChatWindow`, `ChatThreadAlerts`, and their `*Props` types (`ChatInputMediaFile` for attachments)
+- **Thread alerts (typed):** `ChatThreadAlert`, `ChatThreadAlertSeverity`, `mergeChatThreadAlerts`, `MergeChatThreadAlertsInput`, reserved id constants (`CHAT_THREAD_ALERT_ID_LAST_MESSAGE_ERROR`, `CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW`), `CHAT_THREAD_ALERT_REACHABILITY_MESSAGE`
 - **AI summary:** `AISummary`, `AISummaryProps`
 - **Funnel & stage:** `FunnelStageSelector`, `FunnelSelector`, `StageSelector`, and their `*Props` types
 - **CRM sidebar (accordion sections):** `ChatSidebar` (canonical name; `ConsolidatedChatActions` is a deprecated alias), plus `ChatContactStatus`, `StatusChangeDisplay`, `ContactStatusHistoryList`, `ContactStatusHistoryButton`, `ContactInfoEditor`, `ChatContactNotes`, and their prop types
@@ -59,7 +60,60 @@ export function App() {
 - **Integration (typed callbacks):** `ChatIntegrationAdapter`, `createNuviraChatIntegration`, payload types (`SaveContactInput`, `SendChatMessageInput`, …), and Nuvira default implementations (`nuviraDefaultSaveContact`, `nuviraDefaultSendChatMessage`, …). Helpers `pickIntegration` and `pickOnIntegrationError` are mainly for advanced composition. `mergeOnIntegrationError` remains as a deprecated alias for `pickOnIntegrationError` (it picks section-over-root; it does not merge handlers).
 - **Legacy integration helpers:** `ContactStatusHistoryListItem`, `UseTimelineStreamOptions`, `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, `CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`. `fetchContactStatusHistoryDefault` is deprecated; use `nuviraDefaultLoadContactStatusHistory` instead (same implementation).
 
-`ChatWindow` accepts optional `integration`, `onSendMessage`, `onUpdateTalkingToAgent`, plus `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` for realtime, layout, and uploads.
+`ChatWindow` accepts optional `integration`, `onSendMessage`, `onUpdateTalkingToAgent`, plus `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` for realtime, layout, and uploads. It also accepts **`alerts`** (`ChatThreadAlert[]`), **`showReachabilityWindow`**, **`onThreadAlertDismissed`**, and **`components.chatThreadAlerts`** for the thread alert strip (see **Thread alerts** below).
+
+### Thread alerts
+
+Thread alerts are **typed** values rendered in a strip **below `ChatWindowHeader` and above `ChatMessagesContainer`**. Use them for standardized warnings, errors, and info (severity maps to MUI `Alert`).
+
+**Shape (`ChatThreadAlert`):**
+
+| Field | Type | Purpose |
+| --- | --- | --- |
+| `id` | `string` | Stable key for React lists, deduplication, and replacing built-ins |
+| `severity` | `"error" \| "warning" \| "info" \| "success"` | Visual level |
+| `message` | `string` | Main body text |
+| `title` | `string` (optional) | Optional title above the body |
+| `dismissible` | `boolean` (optional) | When `true`, shows a close control; dismissal is stored inside **`ChatThreadAlerts`** (no parent state). If that `id` later disappears from `alerts`, the dismissal clears for that id so it can show again |
+
+**Dismissal:** `ChatThreadAlerts` keeps a set of dismissed ids. Optional **`onAlertDismissed(id)`** on `ChatThreadAlerts`, or **`onThreadAlertDismissed`** on `ChatWindow`, runs after a dismiss (e.g. analytics). Custom **`components.chatThreadAlerts.Alert`** receives **`onDismiss`** when `dismissible` is true — call it from your close control and do not forward `dismissible` / `onDismiss` to DOM nodes.
+
+**Merging (`mergeChatThreadAlerts`):** `ChatWindow` merges `alerts` with built-ins from `contact` and flags:
+
+1. **Last message error** — If `contact.lastMessageErrorReason` is set, a warning with id **`nuvira:last-message-error`** is included unless you pass your own alert with that `id` (e.g. localized copy).
+2. **Reachability** — If `showReachabilityWindow` is true, a warning with id **`nuvira:reachability-window`** and message **`CHAT_THREAD_ALERT_REACHABILITY_MESSAGE`** is included unless you pass an alert with that `id`.
+3. **Additional app alerts** — Remaining entries from `alerts` are appended in order. For duplicate `id` values inside `alerts`, the **last** occurrence wins. Alerts whose `id` was already emitted from steps 1–2 are skipped.
+
+You can call **`mergeChatThreadAlerts`** yourself when building custom layouts; `ChatWindow` uses it internally.
+
+**Example:**
+
+```tsx
+import { ChatWindow, type ChatThreadAlert } from "@nuvira/chat-components";
+
+const extraAlerts: ChatThreadAlert[] = [
+  {
+    id: "billing-hold",
+    severity: "info",
+    title: "Billing",
+    message: "Invoice pending review.",
+    dismissible: true
+  }
+];
+
+<ChatWindow
+  {...windowProps}
+  alerts={extraAlerts}
+  showReachabilityWindow
+  onThreadAlertDismissed={(id) => {
+    /* optional: telemetry */
+  }}
+/>;
+```
+
+**i18n:** Set `showReachabilityWindow={false}` and pass an alert with `id: CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW` and your translated `message`, or pass the same `id` with localized text to override the default string.
+
+**Customization:** `ChatWindow` supports `components.chatThreadAlerts.Alert` — a component receiving `ChatThreadAlert` fields plus `sx` and optional `onDismiss` (same pattern as other `components` maps). You can also render **`ChatThreadAlerts`** standalone with your own `alerts` array and `onAlertDismissed`.
 
 **Thread vs CRM:** On `ChatWindow`, `onSendMessage` and `onUpdateTalkingToAgent` are resolved in order: **window prop → `integration` → Nuvira default**. That resolution applies to the **thread/header** (messages, agent toggle). The **CRM sidebar** receives the same `integration` for mutations and loaders (`saveContact`, `onGenerateSummary`, funnel/stage, status history, etc.). The sidebar does **not** get separate `onSendMessage` / `onUpdateTalkingToAgent` props; include those on `ChatIntegrationAdapter` only if a sidebar-related code path should call them.
 
@@ -84,6 +138,7 @@ Optional **`components`** props let you swap MUI/stub primitives without forking
 - **`ChatInput`:** `TextField` (defaults to `NvTextField`).
 - **`ChatMessage`:** `useMediaUrl` hook (same signature as the package default; must follow rules of hooks).
 - **`ChatMessagesContainer`:** `components.AiCover`, `components.useMediaUrl` for child messages.
+- **`ChatWindow`:** `components.chatThreadAlerts.Alert` → forwarded to `ChatThreadAlerts` (`ChatThreadAlertRenderProps`).
 - **`ChatAiCover`:** `components.Loading`.
 - **`AISummary`:** `components.Loading` on the generate button.
 - **`StatusChangeDisplay`:** `ContactStatusChip`, `CustomStageChip`.

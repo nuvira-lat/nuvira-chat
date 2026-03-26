@@ -4,7 +4,7 @@ import type { ContactBadgeGroupComponents } from "@/components/ContactBadgeGroup
 import { ChatAgentSwitch } from "./Agent/ChatAgentSwitch";
 import { getColorFromstatus } from "@/stubs/contact/ContactStatusChip";
 import LoadingAnimation from "@/stubs/LoadingAnimation";
-import { Alert, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
 import type { ComponentType, ReactNode } from "react";
@@ -15,7 +15,6 @@ import { ContactBadgeGroup } from "./ContactBadgeGroup";
 export interface ChatWindowHeaderProps {
   agentActive: boolean;
   activateAgent: (nv: boolean) => void;
-  showAlert?: boolean;
   contact: Contact;
   /** Profile image; when omitted, avatar uses initials from `contact.name` */
   avatarUrl?: string | null;
@@ -39,7 +38,6 @@ export const ChatWindowHeader = ({
   agentActive,
   contact,
   activateAgent,
-  showAlert,
   avatarUrl,
   loading,
   headerStartSlot,
@@ -102,16 +100,6 @@ export const ChatWindowHeader = ({
           {headerEndSlot}
         </Stack>
       </Stack>
-      {showAlert && (
-        <Alert severity="warning" sx={{ mx: 2, mb: 2 }}>
-          <Typography>This contact can&apos;t be reached, more than 24h have passed.</Typography>
-        </Alert>
-      )}
-      {contact.lastMessageErrorReason && (
-        <Alert severity="warning" sx={{ mx: 2, mb: 2 }}>
-          <Typography>{contact.lastMessageErrorReason}</Typography>
-        </Alert>
-      )}
     </Stack>
   );
 };
