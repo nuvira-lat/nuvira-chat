@@ -42,6 +42,21 @@ export {
 export { ChatInput, type ChatInputProps, type ChatInputMediaFile } from "./components/ChatInput";
 export { ChatWindowHeader, type ChatWindowHeaderProps } from "./components/ChatWindowHeader";
 export { ChatWindow, type ChatWindowProps } from "./components/ChatWindow";
+export {
+  ChatThreadAlerts,
+  type ChatThreadAlertsProps,
+  type ChatThreadAlertRenderProps
+} from "./components/ChatThreadAlerts";
+export {
+  mergeChatThreadAlerts,
+  type MergeChatThreadAlertsInput
+} from "./chatThreadAlerts/mergeChatThreadAlerts";
+export type { ChatThreadAlert, ChatThreadAlertSeverity } from "./types";
+export {
+  CHAT_THREAD_ALERT_ID_LAST_MESSAGE_ERROR,
+  CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW,
+  CHAT_THREAD_ALERT_REACHABILITY_MESSAGE
+} from "./types";
 
 export { AISummary, type AISummaryProps } from "./components/AISummary";
 

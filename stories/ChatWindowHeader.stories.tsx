@@ -17,7 +17,8 @@ const meta: Meta<typeof ChatWindowHeader> = {
   parameters: {
     docs: {
       description: {
-        component: "Header for the chat window with contact info and agent toggle."
+        component:
+          "Header for the chat window with contact info and agent toggle. Thread alerts (warnings, errors, reachability) are rendered by `ChatWindow` via `ChatThreadAlerts` below this header — see **Chat/Composites/ChatWindow** stories."
       }
     }
   }
@@ -32,7 +33,6 @@ export const Default: Story = {
     agentActive: false,
     contact: mockContact,
     activateAgent: fn(),
-    showAlert: false,
     loading: false
   }
 };
@@ -42,17 +42,6 @@ export const AgentActive: Story = {
     agentActive: true,
     contact: mockContact,
     activateAgent: fn(),
-    showAlert: false,
-    loading: false
-  }
-};
-
-export const WithAlert: Story = {
-  args: {
-    agentActive: false,
-    contact: mockContact,
-    activateAgent: fn(),
-    showAlert: true,
     loading: false
   }
 };
@@ -62,7 +51,6 @@ export const Loading: Story = {
     agentActive: false,
     contact: mockContact,
     activateAgent: fn(),
-    showAlert: false,
     loading: true
   }
 };
@@ -72,7 +60,6 @@ export const WithCustomFunnel: Story = {
     agentActive: false,
     contact: mockContactWithFunnel,
     activateAgent: fn(),
-    showAlert: false,
     loading: false
   }
 };
@@ -82,7 +69,6 @@ export const AgentToggleHidden: Story = {
     agentActive: false,
     contact: mockContact,
     activateAgent: fn(),
-    showAlert: false,
     loading: false,
     showAgentToggle: false
   }

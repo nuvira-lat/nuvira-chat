@@ -227,3 +227,10 @@ export interface ChatSidebarProps {
   /** MUI sx prop for the root Stack */
   sx?: import("@mui/material/styles").SxProps<import("@mui/material/styles").Theme>;
 }
+
+export type { ChatThreadAlert, ChatThreadAlertSeverity } from "./chatThreadAlert";
+export {
+  CHAT_THREAD_ALERT_ID_LAST_MESSAGE_ERROR,
+  CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW,
+  CHAT_THREAD_ALERT_REACHABILITY_MESSAGE
+} from "./chatThreadAlert";

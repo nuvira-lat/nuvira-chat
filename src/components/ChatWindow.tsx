@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * Full chat shell: CRM sidebar (`ChatSidebar`), thread header, messages, input.
- * Supports `sidebarPosition`, collapsible CRM, `chatActionsMaxWidth`, `showAgentToggle`, etc.
+ * Full chat shell: CRM sidebar (`ChatSidebar`), thread header, typed thread alerts (`ChatThreadAlerts`), messages, input.
+ * Supports `sidebarPosition`, collapsible CRM, `chatActionsMaxWidth`, `showAgentToggle`, `alerts`, `showReachabilityWindow`, etc.
  * Inject `useTimelineStream`, `useIsMobile`, and `uploadMediaFileWithUrls` for non-Storybook apps.
  *
  * **Thread vs CRM integration:** `onSendMessage` and `onUpdateTalkingToAgent` are resolved on this
@@ -14,7 +14,7 @@
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
-import { useState, KeyboardEvent, useCallback, useId } from "react";
+import { useState, KeyboardEvent, useCallback, useId, useMemo } from "react";
 import {
   Contact,
   ContactMessage,
@@ -42,6 +42,9 @@ import {
   nuviraDefaultSendChatMessage,
   nuviraDefaultUpdateTalkingToAgent
 } from "@/integration/nuviraDefaults";
+import { mergeChatThreadAlerts } from "@/chatThreadAlerts/mergeChatThreadAlerts";
+import type { ChatThreadAlert } from "@/types";
+import { ChatThreadAlerts, type ChatThreadAlertsProps } from "./ChatThreadAlerts";
 
 /** Matches CRM sidebar column min width so the header toggle aligns with the actions panel */
 const CRM_PANEL_MIN_WIDTH = { md: 320 };
@@ -94,6 +97,18 @@ export interface ChatWindowProps {
   onSendMessage?: ChatIntegrationAdapter["onSendMessage"];
   /** Override {@link ChatIntegrationAdapter.onUpdateTalkingToAgent} for this window only. */
   onUpdateTalkingToAgent?: ChatIntegrationAdapter["onUpdateTalkingToAgent"];
+  /** App-defined thread alerts; merged with built-ins — see {@link mergeChatThreadAlerts}. */
+  alerts?: ChatThreadAlert[];
+  /**
+   * When true, shows the reachability built-in alert unless overridden by an alert with id
+   * `nuvira:reachability-window`.
+   */
+  showReachabilityWindow?: boolean;
+  components?: {
+    chatThreadAlerts?: ChatThreadAlertsProps["components"];
+  };
+  /** Fired when the user dismisses a `dismissible` thread alert (dismissal state lives in `ChatThreadAlerts`). */
+  onThreadAlertDismissed?: ChatThreadAlertsProps["onAlertDismissed"];
 }
 
 export const ChatWindow = ({
@@ -120,7 +135,11 @@ export const ChatWindow = ({
   contactUpdatedBroadcastType = CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE,
   integration,
   onSendMessage: onSendMessageProp,
-  onUpdateTalkingToAgent: onUpdateTalkingToAgentProp
+  onUpdateTalkingToAgent: onUpdateTalkingToAgentProp,
+  alerts: alertsProp,
+  showReachabilityWindow = false,
+  components: componentsProp,
+  onThreadAlertDismissed
 }: ChatWindowProps) => {
   const sendMessage =
     onSendMessageProp ?? integration?.onSendMessage ?? nuviraDefaultSendChatMessage;
@@ -148,6 +167,16 @@ export const ChatWindow = ({
   const [messages, setMessages] = useState<ContactMessage[]>(initialMessages);
   const [contact, setContact] = useState<Contact>(initialContact);
   const isMobile = useIsMobileProp();
+
+  const mergedThreadAlerts = useMemo(
+    () =>
+      mergeChatThreadAlerts({
+        contact,
+        alerts: alertsProp,
+        showReachabilityWindow
+      }),
+    [contact, alertsProp, showReachabilityWindow]
+  );
 
   const showCrmSidebar = !isMobile && (!sidebarCollapsible || sidebarOpen);
   /** Legacy split uses fixed 80% width; collapsible mode uses flex so the thread grows when CRM is hidden */
@@ -352,6 +381,11 @@ export const ChatWindow = ({
         headerEndSlot={headerEndSlot}
         showAgentToggle={showAgentToggle}
         loading={loading ?? false}
+      />
+      <ChatThreadAlerts
+        alerts={mergedThreadAlerts}
+        components={componentsProp?.chatThreadAlerts}
+        onAlertDismissed={onThreadAlertDismissed}
       />
       <ChatMessagesContainer
         agentActive={agentActive ?? false}
