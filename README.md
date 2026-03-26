@@ -46,6 +46,7 @@ export function App() {
 
 ### Public API
 
+- **Server / RSC:** `@nuvira/chat-components/server` — types, `mergeChatThreadAlerts`, `createChatTheme`, pure helpers (`pickIntegration`, …), and other non-UI exports you can run in Server Components (see **Server Components** below). Fetch-based Nuvira defaults (`createNuviraChatIntegration`, `nuviraDefault*`) stay on the **root** entry. UI and client hooks stay on the root.
 - **Theme:** `createChatTheme`, `ChatThemeOptions`
 - **Message components:** `TextMessage`, `ImageMessage`, `AudioMessage`, `VideoMessage`, `DocumentMessage`, and their `*Props` types
 - **Conversation list:** `ChatList`, `ChatListItem`, `ChatListProps`, `ChatListItemProps`, `ChatListItemData`
@@ -61,6 +62,36 @@ export function App() {
 - **Legacy integration helpers:** `ContactStatusHistoryListItem`, `UseTimelineStreamOptions`, `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, `CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`. `fetchContactStatusHistoryDefault` is deprecated; use `nuviraDefaultLoadContactStatusHistory` instead (same implementation).
 
 `ChatWindow` accepts optional `integration`, `onSendMessage`, `onUpdateTalkingToAgent`, plus `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` for realtime, layout, and uploads. It also accepts **`alerts`** (`ChatThreadAlert[]`), **`showReachabilityWindow`**, **`onThreadAlertDismissed`**, and **`components.chatThreadAlerts`** for the thread alert strip (see **Thread alerts** below).
+
+### SSR / Next.js (App Router)
+
+- **`CollapsibleEdgePanel`:** The width animation honors `prefers-reduced-motion` through CSS in `sx`, not `useMediaQuery`, so the server render and the first client paint stay aligned for that concern (no extra `matchMedia` divergence in React output).
+- **`ChatWindow` and viewport layout:** Responsive branching (for example split inbox on `md+` vs stacked mobile) is your app’s responsibility. Pass **`useIsMobile`** (or equivalent) in an SSR-safe way—for example MUI’s `useMediaQuery` with **`noSsr`** and an explicit **`defaultMatches`** so server HTML matches the initial client render, or a stable default until client-only logic runs. See MUI’s [useMediaQuery and server-side rendering](https://mui.com/material-ui/react-use-media-query/#server-side-rendering).
+
+### Server Components (React / Next.js App Router)
+
+The **root** export (`@nuvira/chat-components`) is built as a **Client Component** bundle: the published `dist/index.mjs` / `dist/index.js` start with `"use client"`. Import `ChatWindow`, `ChatList`, hooks, and the rest of the UI from a file that begins with `"use client"` (or from another client component).
+
+Use the **`@nuvira/chat-components/server`** subpath in **Server Components** for anything that must not pull the client graph:
+
+- **`mergeChatThreadAlerts`**, alert **types** and **id constants**
+- **Domain types** (`Contact`, `ChatThreadAlert`, `ChatListItemData`, sidebar types, …) and **sidebar section constants**
+- **`createChatTheme`** / **`ChatThemeOptions`** (theme object only; wrap with MUI `ThemeProvider` in a client layout)
+- **`pickIntegration`**, **`pickOnIntegrationError`** / **`mergeOnIntegrationError`** (pure; no `fetch`)
+- **`uploadMediaFileWithUrls`** (stub — no network), **`CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`**
+- **Type-only** props: `ChatListAvatarComponentProps`, `ContactBadgeGroupComponents`, `ChatMessageUseMediaUrl`, `ChatAiCoverProps`, `ContactStatusHistoryListItem`, and integration payload types
+
+**Root entry only (client-oriented):** **`createNuviraChatIntegration`**, **`nuviraDefault*`** helpers, and deprecated **`fetchContactStatusHistoryDefault`** use **`fetch("/api/...")`** with **relative** URLs. They are for **browser** execution; in Node / RSC, relative `fetch` is invalid — build your adapter with absolute URLs or call these only from client code.
+
+**Not** on the server entry: **`useTimelineStream`**, **`useIsMobile`**, and every **React component**.
+
+```tsx
+// app/thread/alerts.ts — Server Component module
+import {
+  mergeChatThreadAlerts,
+  type ChatThreadAlert,
+} from "@nuvira/chat-components/server";
+```
 
 ### Thread alerts
 
@@ -256,6 +287,8 @@ Publishing is manual. Before the first (or any) release:
 4. Publish: `npm publish` (scoped public access is set in `publishConfig`).
 
 `prepublishOnly` runs `npm run build` so the published package always includes a fresh `dist/`.
+
+**Pull requests:** If you change `package.json` `exports`, the root vs `@nuvira/chat-components/server` split, or the `"use client"` build banner, say so in the **PR title or description** (not only a component name like ChatWindow) so reviewers and release notes match the packaging impact.
 
 ## License
 

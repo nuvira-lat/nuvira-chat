@@ -1,7 +1,7 @@
 {
   "name": "@nuvira/chat-components",
-  "version": "0.1.7",
-  "description": "Chat UI for React: MUI theme, message renderers, conversation list, CRM sidebar, chat shell (ChatWindow), and contact badges",
+  "version": "0.1.10",
+  "description": "Chat UI for React (MUI): components and theme; dual entry for Next.js App Router — root is a Client bundle, @nuvira/chat-components/server for RSC-safe utilities and types",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/index.js",
@@ -18,6 +18,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.mjs",
+      "require": "./dist/server.js"
     }
   },
   "repository": {

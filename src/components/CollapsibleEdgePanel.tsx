@@ -1,16 +1,14 @@
-"use client";
-
 /**
  * Collapsible column with a fixed edge toggle and animated width. Used in Storybook
  * for the conversation list shell; not part of the published npm API unless re-exported.
- * Respects `prefers-reduced-motion` for the width transition.
+ * Width transition respects `prefers-reduced-motion` via CSS (`sx`), avoiding SSR/client
+ * `matchMedia` mismatch from `useMediaQuery`.
  */
 import type { ReactNode } from "react";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 /** Props for {@link CollapsibleEdgePanel}. */
 export interface CollapsibleEdgePanelProps {
@@ -43,7 +41,6 @@ export function CollapsibleEdgePanel({
   children,
   sx
 }: CollapsibleEdgePanelProps) {
-  const prefersReducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
   const widthResolved = open ? expandedWidth : collapsedWidth;
   const toggleLabel = open ? toggleAriaLabelCollapse : toggleAriaLabelExpand;
   const toggle = (
@@ -80,7 +77,10 @@ export function CollapsibleEdgePanel({
         minWidth: 0,
         overflow: "hidden",
         flexShrink: 0,
-        transition: prefersReducedMotion ? "none" : "width 0.2s ease",
+        transition: "width 0.2s ease",
+        "@media (prefers-reduced-motion: reduce)": {
+          transition: "none"
+        },
         display: "flex",
         flexDirection: "column",
         alignSelf: "stretch"
