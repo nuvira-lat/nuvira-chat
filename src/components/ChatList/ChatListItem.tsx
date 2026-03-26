@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Single conversation row: avatar (with unread badge), title, preview line, time,
  * {@link ContactBadgeGroup}, and optional error hint. Uses `ListItemButton` for

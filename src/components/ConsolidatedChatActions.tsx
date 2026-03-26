@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Stack, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";

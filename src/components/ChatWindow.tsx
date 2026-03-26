@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Full chat shell: CRM sidebar (`ChatSidebar`), thread header, typed thread alerts (`ChatThreadAlerts`), messages, input.
  * Supports `sidebarPosition`, collapsible CRM, `chatActionsMaxWidth`, `showAgentToggle`, `alerts`, `showReachabilityWindow`, etc.

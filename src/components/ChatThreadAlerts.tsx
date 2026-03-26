@@ -1,5 +1,3 @@
-"use client";
-
 import { Alert, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { ComponentType } from "react";

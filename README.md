@@ -46,6 +46,7 @@ export function App() {
 
 ### Public API
 
+- **Server / RSC:** `@nuvira/chat-components/server` — types, `mergeChatThreadAlerts`, `createChatTheme`, integration defaults, and other non-UI exports safe to import from React Server Components (see **Server Components** below). UI and client hooks stay on the package root.
 - **Theme:** `createChatTheme`, `ChatThemeOptions`
 - **Message components:** `TextMessage`, `ImageMessage`, `AudioMessage`, `VideoMessage`, `DocumentMessage`, and their `*Props` types
 - **Conversation list:** `ChatList`, `ChatListItem`, `ChatListProps`, `ChatListItemProps`, `ChatListItemData`
@@ -66,6 +67,29 @@ export function App() {
 
 - **`CollapsibleEdgePanel`:** The width animation honors `prefers-reduced-motion` through CSS in `sx`, not `useMediaQuery`, so the server render and the first client paint stay aligned for that concern (no extra `matchMedia` divergence in React output).
 - **`ChatWindow` and viewport layout:** Responsive branching (for example split inbox on `md+` vs stacked mobile) is your app’s responsibility. Pass **`useIsMobile`** (or equivalent) in an SSR-safe way—for example MUI’s `useMediaQuery` with **`noSsr`** and an explicit **`defaultMatches`** so server HTML matches the initial client render, or a stable default until client-only logic runs. See MUI’s [useMediaQuery and server-side rendering](https://mui.com/material-ui/react-use-media-query/#server-side-rendering).
+
+### Server Components (React / Next.js App Router)
+
+The **root** export (`@nuvira/chat-components`) is built as a **Client Component** bundle: the published `dist/index.mjs` / `dist/index.js` start with `"use client"`. Import `ChatWindow`, `ChatList`, hooks, and the rest of the UI from a file that begins with `"use client"` (or from another client component).
+
+Use the **`@nuvira/chat-components/server`** subpath in **Server Components** for anything that must not pull the client graph:
+
+- **`mergeChatThreadAlerts`**, alert **types** and **id constants**
+- **Domain types** (`Contact`, `ChatThreadAlert`, `ChatListItemData`, sidebar types, …) and **sidebar section constants**
+- **`createChatTheme`** / **`ChatThemeOptions`** (theme object only; wrap with MUI `ThemeProvider` in a client layout)
+- **`createNuviraChatIntegration`**, **`nuviraDefault*`** fetch helpers, **`pickIntegration`** / **`pickOnIntegrationError`**
+- **`uploadMediaFileWithUrls`** (stub), **`CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`**, deprecated **`fetchContactStatusHistoryDefault`**
+- **Type-only** props: `ChatListAvatarComponentProps`, `ContactBadgeGroupComponents`, `ChatMessageUseMediaUrl`, `ChatAiCoverProps`, and integration payload types
+
+**Not** on the server entry (import from the root in client code only): **`useTimelineStream`**, **`useIsMobile`**, and every **React component**.
+
+```tsx
+// app/thread/alerts.ts — Server Component module
+import {
+  mergeChatThreadAlerts,
+  type ChatThreadAlert,
+} from "@nuvira/chat-components/server";
+```
 
 ### Thread alerts
 

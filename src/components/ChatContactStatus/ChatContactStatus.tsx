@@ -1,5 +1,3 @@
-"use client";
-
 import { Stack, Typography, Tooltip, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCallback, useState } from "react";

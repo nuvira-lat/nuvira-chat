@@ -1,6 +1,9 @@
 /**
  * @nuvira/chat-components — theme, message renderers, conversation list, CRM sidebar,
  * chat shell, and shared types. See README “Public API”.
+ *
+ * The published root bundle is a **Client Component** entry (`"use client"` prepended at build).
+ * For Server Components, import utilities and types from `@nuvira/chat-components/server`.
  */
 
 export { createChatTheme, type ChatThemeOptions } from "./theme";

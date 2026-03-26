@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Scrollable list of conversations. Renders {@link ChatListItem} rows; parent supplies
  * data, selection, and `onSelect`. Empty state is customizable via `emptyState`.

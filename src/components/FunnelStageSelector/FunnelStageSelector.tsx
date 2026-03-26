@@ -1,5 +1,3 @@
-"use client";
-
 import { Stack, Typography } from "@mui/material";
 import { Contact, CustomFunnel, CustomStage } from "@/types";
 import { useState, useMemo, useEffect } from "react";

@@ -4,8 +4,6 @@
  * Displays AI-generated summary for a contact with generate functionality.
  */
 
-"use client";
-
 import LoadingAnimation from "@/stubs/LoadingAnimation";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { Typography, Button, Tooltip, Stack } from "@mui/material";
