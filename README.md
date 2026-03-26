@@ -62,6 +62,11 @@ export function App() {
 
 `ChatWindow` accepts optional `integration`, `onSendMessage`, `onUpdateTalkingToAgent`, plus `useTimelineStream`, `useIsMobile`, `uploadMediaFileWithUrls`, and `contactUpdatedBroadcastType` for realtime, layout, and uploads. It also accepts **`alerts`** (`ChatThreadAlert[]`), **`showReachabilityWindow`**, **`onThreadAlertDismissed`**, and **`components.chatThreadAlerts`** for the thread alert strip (see **Thread alerts** below).
 
+### SSR / Next.js (App Router)
+
+- **`CollapsibleEdgePanel`:** The width animation honors `prefers-reduced-motion` through CSS in `sx`, not `useMediaQuery`, so the server render and the first client paint stay aligned for that concern (no extra `matchMedia` divergence in React output).
+- **`ChatWindow` and viewport layout:** Responsive branching (for example split inbox on `md+` vs stacked mobile) is your app’s responsibility. Pass **`useIsMobile`** (or equivalent) in an SSR-safe way—for example MUI’s `useMediaQuery` with **`noSsr`** and an explicit **`defaultMatches`** so server HTML matches the initial client render, or a stable default until client-only logic runs. See MUI’s [useMediaQuery and server-side rendering](https://mui.com/material-ui/react-use-media-query/#server-side-rendering).
+
 ### Thread alerts
 
 Thread alerts are **typed** values rendered in a strip **below `ChatWindowHeader` and above `ChatMessagesContainer`**. Use them for standardized warnings, errors, and info (severity maps to MUI `Alert`).
