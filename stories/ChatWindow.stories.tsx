@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { Contact, ContactMessage, ContactNotes, Workspace } from "@/types";
-import type { ChatThreadAlert } from "@/types/chatThreadAlert";
+import type { ChatThreadAlert } from "@/types";
 import { ChatWindow } from "@/components/ChatWindow";
 
 const meta: Meta<typeof ChatWindow> = {

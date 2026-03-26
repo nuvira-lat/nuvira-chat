@@ -43,7 +43,7 @@ import {
   nuviraDefaultUpdateTalkingToAgent
 } from "@/integration/nuviraDefaults";
 import { mergeChatThreadAlerts } from "@/chatThreadAlerts/mergeChatThreadAlerts";
-import type { ChatThreadAlert } from "@/types/chatThreadAlert";
+import type { ChatThreadAlert } from "@/types";
 import { ChatThreadAlerts, type ChatThreadAlertsProps } from "./ChatThreadAlerts";
 
 /** Matches CRM sidebar column min width so the header toggle aligns with the actions panel */

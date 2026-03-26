@@ -3,8 +3,8 @@
 import { Alert, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { ComponentType } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ChatThreadAlert } from "@/types/chatThreadAlert";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ChatThreadAlert } from "@/types";
 
 export interface ChatThreadAlertRenderProps extends ChatThreadAlert {
   /** MUI Alert `sx` forwarded from the row wrapper for the default renderer. */
@@ -76,20 +76,35 @@ export const ChatThreadAlerts = ({
     });
   }, [alerts]);
 
-  const handleDismiss = useCallback(
-    (id: string) => {
-      setDismissedIds((prev) => {
-        if (prev.has(id)) {
-          return prev;
+  const prevDismissedRef = useRef<Set<string> | null>(null);
+
+  useEffect(() => {
+    const prev = prevDismissedRef.current;
+    const current = dismissedIds;
+    if (prev === null) {
+      prevDismissedRef.current = new Set(current);
+      return;
+    }
+    if (onAlertDismissed) {
+      for (const id of current) {
+        if (!prev.has(id)) {
+          onAlertDismissed(id);
         }
-        const next = new Set(prev);
-        next.add(id);
-        return next;
-      });
-      onAlertDismissed?.(id);
-    },
-    [onAlertDismissed]
-  );
+      }
+    }
+    prevDismissedRef.current = new Set(current);
+  }, [dismissedIds, onAlertDismissed]);
+
+  const handleDismiss = useCallback((id: string) => {
+    setDismissedIds((prev) => {
+      if (prev.has(id)) {
+        return prev;
+      }
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  }, []);
 
   const visibleAlerts = useMemo(
     () => alerts.filter((a) => !dismissedIds.has(a.id)),

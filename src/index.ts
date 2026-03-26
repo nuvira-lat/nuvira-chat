@@ -51,12 +51,12 @@ export {
   mergeChatThreadAlerts,
   type MergeChatThreadAlertsInput
 } from "./chatThreadAlerts/mergeChatThreadAlerts";
-export type { ChatThreadAlert, ChatThreadAlertSeverity } from "./types/chatThreadAlert";
+export type { ChatThreadAlert, ChatThreadAlertSeverity } from "./types";
 export {
   CHAT_THREAD_ALERT_ID_LAST_MESSAGE_ERROR,
   CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW,
   CHAT_THREAD_ALERT_REACHABILITY_MESSAGE
-} from "./types/chatThreadAlert";
+} from "./types";
 
 export { AISummary, type AISummaryProps } from "./components/AISummary";
 

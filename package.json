@@ -1,6 +1,6 @@
 {
   "name": "@nuvira/chat-components",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Chat UI for React: MUI theme, message renderers, conversation list, CRM sidebar, chat shell (ChatWindow), and contact badges",
   "license": "MIT",
   "sideEffects": false,
@@ -10,6 +10,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "exports": {
@@ -38,8 +39,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"*.{js,mjs,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"*.{js,mjs,json}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"vitest.config.ts\" \"*.{js,mjs,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"stories/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"vitest.config.ts\" \"*.{js,mjs,json}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "check": "npm run typecheck && npm run lint && npm run format:check",
     "prepare": "husky",
     "clean": "npm run lint:fix && npm run format"
@@ -84,6 +87,8 @@
     "storybook": "8.6.18",
     "tsup": "^8.5.1",
     "typescript": "^5.0.0",
-    "typescript-eslint": "^8.57.1"
+    "typescript-eslint": "^8.57.1",
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
   }
 }

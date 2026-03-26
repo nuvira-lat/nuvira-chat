@@ -76,13 +76,15 @@ Thread alerts are **typed** values rendered in a strip **below `ChatWindowHeader
 | `title` | `string` (optional) | Optional title above the body |
 | `dismissible` | `boolean` (optional) | When `true`, shows a close control; dismissal is stored inside **`ChatThreadAlerts`** (no parent state). If that `id` later disappears from `alerts`, the dismissal clears for that id so it can show again |
 
-**Dismissal:** `ChatThreadAlerts` keeps a set of dismissed ids. Optional **`onAlertDismissed(id)`** on `ChatThreadAlerts`, or **`onThreadAlertDismissed`** on `ChatWindow`, runs after a dismiss (e.g. analytics). Custom **`components.chatThreadAlerts.Alert`** receives **`onDismiss`** when `dismissible` is true — call it from your close control and do not forward `dismissible` / `onDismiss` to DOM nodes.
+**Dismissal:** `ChatThreadAlerts` keeps a set of dismissed ids. Optional **`onAlertDismissed(id)`** on `ChatThreadAlerts`, or **`onThreadAlertDismissed`** on `ChatWindow`, runs **at most once per `id` each time that id newly enters the dismissed set** (after React commits state)—for example analytics. Redundant close actions do not invoke the callback again. Custom **`components.chatThreadAlerts.Alert`** receives **`onDismiss`** when `dismissible` is true — call it from your close control and do not forward `dismissible` / `onDismiss` to DOM nodes.
 
 **Merging (`mergeChatThreadAlerts`):** `ChatWindow` merges `alerts` with built-ins from `contact` and flags:
 
-1. **Last message error** — If `contact.lastMessageErrorReason` is set, a warning with id **`nuvira:last-message-error`** is included unless you pass your own alert with that `id` (e.g. localized copy).
-2. **Reachability** — If `showReachabilityWindow` is true, a warning with id **`nuvira:reachability-window`** and message **`CHAT_THREAD_ALERT_REACHABILITY_MESSAGE`** is included unless you pass an alert with that `id`.
+1. **Last message error** — If `contact.lastMessageErrorReason` is set, a warning with id **`CHAT_THREAD_ALERT_ID_LAST_MESSAGE_ERROR`** (`nuvira:last-message-error`) is included unless you pass your own alert with that `id` (e.g. localized copy).
+2. **Reachability** — If `showReachabilityWindow` is true, a warning with id **`CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW`** (`nuvira:reachability-window`) and message **`CHAT_THREAD_ALERT_REACHABILITY_MESSAGE`** is included unless you pass an alert with that `id`.
 3. **Additional app alerts** — Remaining entries from `alerts` are appended in order. For duplicate `id` values inside `alerts`, the **last** occurrence wins. Alerts whose `id` was already emitted from steps 1–2 are skipped.
+
+**Migration (`ChatWindowHeader`):** The **`showAlert`** prop was removed from **`ChatWindowHeader`**. Use **`ChatWindow`** with **`showReachabilityWindow`** and/or typed **`alerts`** instead (see [CHANGELOG.md](CHANGELOG.md)).
 
 You can call **`mergeChatThreadAlerts`** yourself when building custom layouts; `ChatWindow` uses it internally.
 

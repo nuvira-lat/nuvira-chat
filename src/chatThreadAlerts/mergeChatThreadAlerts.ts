@@ -1,10 +1,9 @@
-import type { Contact } from "@/types";
-import type { ChatThreadAlert } from "@/types/chatThreadAlert";
+import type { Contact, ChatThreadAlert } from "@/types";
 import {
   CHAT_THREAD_ALERT_ID_LAST_MESSAGE_ERROR,
   CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW,
   CHAT_THREAD_ALERT_REACHABILITY_MESSAGE
-} from "@/types/chatThreadAlert";
+} from "@/types";
 
 export interface MergeChatThreadAlertsInput {
   contact: Contact;

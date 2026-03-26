@@ -29,4 +29,4 @@ export const CHAT_THREAD_ALERT_ID_REACHABILITY_WINDOW = "nuvira:reachability-win
 
 /** Default English copy for the reachability built-in; override by passing an alert with the reachability id. */
 export const CHAT_THREAD_ALERT_REACHABILITY_MESSAGE =
-  "This contact can't be reached, more than 24h have passed.";
+  "This contact can't be reached. More than 24 hours have passed.";
