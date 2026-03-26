@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.10] - 2025-03-26
+
+### Changed
+
+- **`@nuvira/chat-components/server`:** No longer re-exports `createNuviraChatIntegration`, `nuviraDefault*`, or `fetchContactStatusHistoryDefault` — those use relative `fetch("/api/...")` and are not safe to run in Node / RSC. Import them from the **package root** (client). `ContactStatusHistoryListItem` remains a **type-only** export on `/server`.
+
 ## [0.1.9] - 2025-03-26
 
 ### Added
 
-- **`@nuvira/chat-components/server`:** RSC-safe subpath for types, `mergeChatThreadAlerts`, `createChatTheme`, integration defaults, `pickIntegration` / `pickOnIntegrationError`, and related non-UI exports (no React components or client hooks).
+- **`@nuvira/chat-components/server`:** RSC-safe subpath for types, `mergeChatThreadAlerts`, `createChatTheme`, `pickIntegration` / `pickOnIntegrationError`, and related non-UI exports (no React components or client hooks).
 
 ### Changed
 

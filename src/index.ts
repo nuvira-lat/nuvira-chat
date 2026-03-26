@@ -3,7 +3,8 @@
  * chat shell, and shared types. See README “Public API”.
  *
  * The published root bundle is a **Client Component** entry (`"use client"` prepended at build).
- * For Server Components, import utilities and types from `@nuvira/chat-components/server`.
+ * For Server Components, import RSC-runnable utilities and types from `@nuvira/chat-components/server`
+ * (not `createNuviraChatIntegration` / `nuviraDefault*` — those use browser relative `fetch`; root only).
  */
 
 export { createChatTheme, type ChatThemeOptions } from "./theme";

@@ -46,7 +46,7 @@ export function App() {
 
 ### Public API
 
-- **Server / RSC:** `@nuvira/chat-components/server` — types, `mergeChatThreadAlerts`, `createChatTheme`, integration defaults, and other non-UI exports safe to import from React Server Components (see **Server Components** below). UI and client hooks stay on the package root.
+- **Server / RSC:** `@nuvira/chat-components/server` — types, `mergeChatThreadAlerts`, `createChatTheme`, pure helpers (`pickIntegration`, …), and other non-UI exports you can run in Server Components (see **Server Components** below). Fetch-based Nuvira defaults (`createNuviraChatIntegration`, `nuviraDefault*`) stay on the **root** entry. UI and client hooks stay on the root.
 - **Theme:** `createChatTheme`, `ChatThemeOptions`
 - **Message components:** `TextMessage`, `ImageMessage`, `AudioMessage`, `VideoMessage`, `DocumentMessage`, and their `*Props` types
 - **Conversation list:** `ChatList`, `ChatListItem`, `ChatListProps`, `ChatListItemProps`, `ChatListItemData`
@@ -77,11 +77,13 @@ Use the **`@nuvira/chat-components/server`** subpath in **Server Components** fo
 - **`mergeChatThreadAlerts`**, alert **types** and **id constants**
 - **Domain types** (`Contact`, `ChatThreadAlert`, `ChatListItemData`, sidebar types, …) and **sidebar section constants**
 - **`createChatTheme`** / **`ChatThemeOptions`** (theme object only; wrap with MUI `ThemeProvider` in a client layout)
-- **`createNuviraChatIntegration`**, **`nuviraDefault*`** fetch helpers, **`pickIntegration`** / **`pickOnIntegrationError`**
-- **`uploadMediaFileWithUrls`** (stub), **`CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`**, deprecated **`fetchContactStatusHistoryDefault`**
-- **Type-only** props: `ChatListAvatarComponentProps`, `ContactBadgeGroupComponents`, `ChatMessageUseMediaUrl`, `ChatAiCoverProps`, and integration payload types
+- **`pickIntegration`**, **`pickOnIntegrationError`** / **`mergeOnIntegrationError`** (pure; no `fetch`)
+- **`uploadMediaFileWithUrls`** (stub — no network), **`CONTACT_UPDATED_BROADCAST_MESSAGE_TYPE`**
+- **Type-only** props: `ChatListAvatarComponentProps`, `ContactBadgeGroupComponents`, `ChatMessageUseMediaUrl`, `ChatAiCoverProps`, `ContactStatusHistoryListItem`, and integration payload types
 
-**Not** on the server entry (import from the root in client code only): **`useTimelineStream`**, **`useIsMobile`**, and every **React component**.
+**Root entry only (client-oriented):** **`createNuviraChatIntegration`**, **`nuviraDefault*`** helpers, and deprecated **`fetchContactStatusHistoryDefault`** use **`fetch("/api/...")`** with **relative** URLs. They are for **browser** execution; in Node / RSC, relative `fetch` is invalid — build your adapter with absolute URLs or call these only from client code.
+
+**Not** on the server entry: **`useTimelineStream`**, **`useIsMobile`**, and every **React component**.
 
 ```tsx
 // app/thread/alerts.ts — Server Component module
@@ -285,6 +287,8 @@ Publishing is manual. Before the first (or any) release:
 4. Publish: `npm publish` (scoped public access is set in `publishConfig`).
 
 `prepublishOnly` runs `npm run build` so the published package always includes a fresh `dist/`.
+
+**Pull requests:** If you change `package.json` `exports`, the root vs `@nuvira/chat-components/server` split, or the `"use client"` build banner, say so in the **PR title or description** (not only a component name like ChatWindow) so reviewers and release notes match the packaging impact.
 
 ## License
 

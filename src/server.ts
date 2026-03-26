@@ -1,9 +1,14 @@
 /**
- * Server-safe (RSC-friendly) exports for Next.js App Router and other environments
- * that distinguish Server vs Client Components.
+ * Exports safe to **import and run** from React Server Components / Node (no UI bundle,
+ * no `"use client"` on this entry).
  *
  * Import from `@nuvira/chat-components/server` in Server Components. Do **not** import
  * the package root (`@nuvira/chat-components`) from RSC — it is a Client Component entry.
+ *
+ * **Not included here:** `createNuviraChatIntegration`, `nuviraDefault*`, and
+ * `fetchContactStatusHistoryDefault` — they call `fetch("/api/...")` with **relative** URLs,
+ * which fails in Node / RSC; import those from the package **root** and run them in the
+ * browser (or replace with your own server-side `fetch` using absolute URLs).
  *
  * Excludes React components and client hooks (`useTimelineStream`, `useIsMobile`).
  */
@@ -49,10 +54,7 @@ export type {
   ChatSidebarProps
 } from "./types";
 
-/**
- * @deprecated Use `nuviraDefaultLoadContactStatusHistory` (same implementation).
- */
-export { fetchContactStatusHistoryDefault } from "./stubs/contactStatusHistory";
+/** Row shape for status history loaders (see root `nuviraDefaultLoadContactStatusHistory`). */
 export type { ContactStatusHistoryListItem } from "./stubs/contactStatusHistory";
 
 export type { UseTimelineStreamOptions } from "./stubs/useWorkspaceStream";
@@ -70,19 +72,6 @@ export type {
   StageUpdateInput,
   LoadContactStatusHistoryFn
 } from "./integration/types";
-
-export {
-  nuviraDefaultSaveContact,
-  nuviraDefaultGenerateSummary,
-  nuviraDefaultUpdateContactStatus,
-  nuviraDefaultLoadContactStatusHistory,
-  nuviraDefaultLoadStages,
-  nuviraDefaultUpdateFunnel,
-  nuviraDefaultUpdateStage,
-  nuviraDefaultUpdateTalkingToAgent,
-  nuviraDefaultSendChatMessage,
-  createNuviraChatIntegration
-} from "./integration/nuviraDefaults";
 
 export {
   pickIntegration,
